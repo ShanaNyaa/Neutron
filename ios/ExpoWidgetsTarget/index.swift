@@ -1,0 +1,19 @@
+import WidgetKit
+import SwiftUI
+internal import ExpoWidgets
+
+@main
+struct ExportWidgets0: WidgetBundle {
+  var body: some Widget {
+    if #available(iOS 17.0, *) {
+      CarWidget()
+    }
+    if #available(iOS 17.0, *) {
+      CarLockWidget()
+    }
+    WidgetLiveActivity()
+    if #available(iOS 18.0, *) {
+      CarControlsBundle().body
+    }
+  }
+}

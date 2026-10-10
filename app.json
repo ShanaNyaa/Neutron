@@ -1,0 +1,159 @@
+{
+  "expo": {
+    "scheme": "mottokar",
+    "userInterfaceStyle": "automatic",
+    "orientation": "default",
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "26.0"
+          }
+        }
+      ],
+      "expo-router",
+      "expo-status-bar",
+      [
+        "expo-font",
+        {
+          "ios": {
+            "fonts": [
+              "./node_modules/@expo-google-fonts/instrument-sans/400Regular/InstrumentSans_400Regular.ttf",
+              "./node_modules/@expo-google-fonts/instrument-sans/500Medium/InstrumentSans_500Medium.ttf",
+              "./node_modules/@expo-google-fonts/instrument-sans/600SemiBold/InstrumentSans_600SemiBold.ttf",
+              "./node_modules/@expo-google-fonts/instrument-sans/700Bold/InstrumentSans_700Bold.ttf"
+            ]
+          },
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "Instrument Sans",
+                "fontDefinitions": [
+                  {
+                    "path": "./node_modules/@expo-google-fonts/instrument-sans/400Regular/InstrumentSans_400Regular.ttf",
+                    "weight": 400
+                  },
+                  {
+                    "path": "./node_modules/@expo-google-fonts/instrument-sans/500Medium/InstrumentSans_500Medium.ttf",
+                    "weight": 500
+                  },
+                  {
+                    "path": "./node_modules/@expo-google-fonts/instrument-sans/600SemiBold/InstrumentSans_600SemiBold.ttf",
+                    "weight": 600
+                  },
+                  {
+                    "path": "./node_modules/@expo-google-fonts/instrument-sans/700Bold/InstrumentSans_700Bold.ttf",
+                    "weight": 700
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "expo-maps",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID to confirm unlocking and starting your car."
+        }
+      ],
+      "expo-sqlite",
+      "./plugins/with-car-intents.js",
+      [
+        "expo-widgets",
+        {
+          "groupIdentifier": "group.com.zackryrosli.mottokar",
+          "widgets": [
+            {
+              "name": "CarWidget",
+              "displayName": "Car",
+              "description": "Range, fuel and quick controls.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge",
+                  "accessoryCircular",
+                  "accessoryRectangular"
+                ],
+                "configuration": {
+                  "title": "Choose a car",
+                  "description": "Pick which of your cars this widget shows.",
+                  "parameters": {
+                    "car": {
+                      "title": "Car",
+                      "type": "enum",
+                      "dynamic": true,
+                      "default": "main",
+                      "values": [
+                        {
+                          "name": "Default car",
+                          "value": "main"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "CarLockWidget",
+              "displayName": "Lock",
+              "description": "Whether your car is locked, at a glance.",
+              "ios": {
+                "supportedFamilies": [
+                  "accessoryCircular"
+                ],
+                "configuration": {
+                  "title": "Choose a car",
+                  "description": "Pick which of your cars this widget shows.",
+                  "parameters": {
+                    "car": {
+                      "title": "Car",
+                      "type": "enum",
+                      "dynamic": true,
+                      "default": "main",
+                      "values": [
+                        {
+                          "name": "Default car",
+                          "value": "main"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "expo-background-task"
+    ],
+    "name": "Mottokar",
+    "slug": "mottokar",
+    "icon": "./assets/icon.png",
+    "ios": {
+      "icon": "./assets/Mottokar.icon",
+      "bundleIdentifier": "com.zackryrosli.mottokar",
+      "appleTeamId": "PAJK9L7KYM",
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.com.zackryrosli.mottokar"
+        ],
+        "keychain-access-groups": [
+          "$(AppIdentifierPrefix)com.zackryrosli.mottokar.shared"
+        ]
+      }
+    },
+    "android": {
+      "package": "com.zackryrosli.mottokar",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-foreground.png",
+        "backgroundColor": "#0088FF"
+      }
+    }
+  }
+}

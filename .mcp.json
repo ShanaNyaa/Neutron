@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "nalar": {
+      "type": "stdio",
+      "command": "/Users/zack/.cargo/bin/nalar",
+      "args": [
+        "mcp"
+      ],
+      "env": {}
+    }
+  }
+}

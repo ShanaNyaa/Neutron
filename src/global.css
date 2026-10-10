@@ -1,0 +1,43 @@
+@import "tailwindcss";
+@import "uniwind";
+
+@layer theme {
+  :root {
+    @variant light {
+      --color-background: #f4f5f7;
+      /* Top of the vehicle hero gradient. */
+      --color-hero: #c3cfe0;
+      /* Status/control tiles. */
+      --color-inset: #ffffff;
+      --color-surface: #ffffff;
+      --color-card: #ffffff;
+      --color-surface-2: #eceef2;
+      --color-foreground: #0b0d12;
+      --color-muted: #6b7280;
+      --color-border: #e3e6eb;
+      --color-accent: #2563eb;
+      --color-accent-foreground: #ffffff;
+      --color-success: #16a34a;
+      --color-warning: #d97706;
+      --color-danger: #dc2626;
+    }
+
+    @variant dark {
+      --color-background: #000000;
+      --color-hero: #182234;
+      --color-inset: #14161a;
+      /* Translucent surfaces so the frosted-glass blur shows through. */
+      --color-surface: rgba(255, 255, 255, 0.06);
+      --color-card: #08090b;
+      --color-surface-2: rgba(255, 255, 255, 0.10);
+      --color-foreground: #f5f6f8;
+      --color-muted: #9aa3b2;
+      --color-border: rgba(255, 255, 255, 0.12);
+      --color-accent: #5b9dff;
+      --color-accent-foreground: #ffffff;
+      --color-success: #34d399;
+      --color-warning: #fbbf24;
+      --color-danger: #fb7185;
+    }
+  }
+}
