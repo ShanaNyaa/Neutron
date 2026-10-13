@@ -2,6 +2,10 @@
 
 An iOS and Android app for controlling connected cars: lock and unlock, remote start, climate, find the car, and read its status. It talks to each brand's own backend with the account you already use in the brand's app.
 
+There's also a web version for Proton cars in `web/`: a React app with a small Node server, run with Podman.
+
+This is a fork of [zekr89/mottokar](https://github.com/zekr89/mottokar). The web version is added here.
+
 Brands:
 
 - **Proton Link 2.0** (Proton X50, X70, S70 and other Atlas-based cars). Complete.
@@ -23,6 +27,18 @@ bun install
 bunx expo run:ios        # or: bunx expo run:android
 bunx expo start          # the dev server, once a build is installed
 ```
+
+### Web version
+
+Needs only Podman; Node and the npm packages stay inside the containers. From `web/`:
+
+```bash
+podman compose up                                  # dev, http://localhost:5173
+podman compose --profile prod up -d --build prod   # production, http://localhost:8080
+podman compose run --rm dev npm run typecheck
+```
+
+See `web/README.md` for how it works and what it stores.
 
 Checks:
 

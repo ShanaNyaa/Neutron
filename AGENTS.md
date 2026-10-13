@@ -39,3 +39,17 @@ Docs: https://docs.expo.dev/eas/index.md
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## Web app (`web/`)
+
+`web/` is a separate React (Vite) + Node (Hono) app for Proton cars. The Expo rules above don't apply to it. See `web/README.md`.
+
+- Run everything through Podman, from `web/`. Never install Node packages on the host:
+  - `podman compose up`: dev server on http://localhost:5173
+  - `podman compose run --rm dev npm install <package>`: add a package
+  - `podman compose run --rm dev npm run typecheck`: typecheck. Run it before declaring a web task done.
+  - `podman compose --profile prod up -d --build prod`: production build on http://localhost:8080
+- The browser can't call Proton directly (no CORS, and MQTT needs a raw TLS socket). All Proton calls go through `web/server/`.
+- `web/server/proton/` ports `src/providers/proton/` to Node. It imports `src/providers/proton/mappers.ts`, `format.ts` and `src/core/types.ts` unchanged. After changing those files, run the web typecheck too.
+- `web/` is excluded from the root `tsconfig.json` and ESLint config; it has its own `web/tsconfig.json`.
+- Keep the server ports bound to `127.0.0.1` and keep the JSON-only and `ALLOWED_HOSTS` checks in `web/server/index.ts`: the app can unlock the car.
