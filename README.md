@@ -50,6 +50,7 @@ plugins/native/   Swift for Shortcuts, Control Center and the widgets' buttons,
                   which run without the JS runtime. ProtonCarClient.swift is the
                   Proton provider again, in Swift, for that path.
 docs/             Notes from reverse engineering Proton Link.
+web/              Browser version (React + Node), run with Podman. See web/README.md.
 ```
 
 ## Adding a brand

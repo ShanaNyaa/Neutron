@@ -1,0 +1,42 @@
+# Run from web/:  podman compose up         → dev server with hot reload on http://localhost:5173
+#                 podman compose --profile prod up --build   → production build on http://localhost:8080
+# Everything (Node, npm packages) lives in the containers; nothing is installed on the host.
+
+x-env: &env
+  TZ: Asia/Kuala_Lumpur
+  DATA_DIR: /data
+  # Host names allowed in the browser's address bar. Add your LAN name or IP to use it from your phone.
+  ALLOWED_HOSTS: localhost,127.0.0.1
+
+services:
+  dev:
+    image: docker.io/library/node:24-slim
+    working_dir: /app/web
+    command: sh -c "npm install --no-audit --no-fund && npm run dev"
+    environment: *env
+    ports:
+      # Bound to this machine only: the app can unlock your car.
+      - "127.0.0.1:5173:5173"
+    volumes:
+      - .:/app/web
+      # The mobile app's Proton mappers are shared, read-only.
+      - ../src:/app/src:ro
+      - node_modules:/app/web/node_modules
+      - data:/data
+
+  prod:
+    profiles: [prod]
+    build:
+      context: ..
+      dockerfile: web/Containerfile
+    environment: *env
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - data:/data
+    restart: unless-stopped
+
+volumes:
+  node_modules:
+  # Your Proton session tokens and the pinned MQTT certificate.
+  data:
