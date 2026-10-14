@@ -4,6 +4,8 @@ import { createContext, useCallback, useContext, useState, type FormEvent, type 
 import { api, ApiError, type CommandResult, type Stage, type WebVehicle } from "../api.ts";
 import { type CommandDef } from "../commands.ts";
 import { useRefreshAfterCommand, useStored } from "../hooks.ts";
+import { usePrefs } from "../prefs.ts";
+import { Picker } from "./Picker.tsx";
 
 type Running = { def: CommandDef; stage: Stage | "sending"; result?: CommandResult; error?: string };
 type EngineRun = { vin: string; endsAt: number } | null;
@@ -95,6 +97,7 @@ function ConfirmSheet({ def, needsPin, onCancel, onSend }: {
 }) {
   const [values, setValues] = useState<Record<string, number>>(() => Object.fromEntries((def.params ?? []).map((p) => [p.key, p.default])));
   const [pin, setPin] = useState("");
+  const { pickerStyle } = usePrefs();
   const Icon = def.icon;
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -109,21 +112,18 @@ function ConfirmSheet({ def, needsPin, onCancel, onSend }: {
           <span className="spacer" />
           <button type="button" className="btn ghost icon" onClick={onCancel} aria-label="Cancel"><X size={20} /></button>
         </div>
-        {def.params?.map((param) => (
-          <div key={param.key} className="stack" style={{ gap: 8 }}>
-            <span className="section-label" style={{ margin: 0 }}>{param.label}</span>
-            <div className="choices" role="radiogroup" aria-label={param.label}>
-              {param.options.map((o) => {
-                const on = values[param.key] === o.value;
-                return (
-                  <button key={o.value} type="button" role="radio" aria-checked={on} className={`choice ${on ? "selected" : ""}`} onClick={() => setValues((v) => ({ ...v, [param.key]: o.value }))}>
-                    {o.label}
-                  </button>
-                );
-              })}
+        {!!def.params?.length && (
+          <>
+            <div className={`pickers pickers-${pickerStyle}`} style={{ ["--cols" as string]: def.params.length }}>
+              {def.params.map((param) => (
+                <div key={param.key} className="picker-field">
+                  <span className="section-label" style={{ margin: 0 }}>{param.label}</span>
+                  <Picker key={pickerStyle} style={pickerStyle} param={param} value={values[param.key]} onChange={(v) => setValues((cur) => ({ ...cur, [param.key]: v }))} />
+                </div>
+              ))}
             </div>
-          </div>
-        ))}
+          </>
+        )}
         {needsPin && (
           <label className="field">
             Vehicle PIN

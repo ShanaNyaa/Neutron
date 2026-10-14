@@ -7,11 +7,13 @@ import { dateTime, km, minutes, number } from "../format.ts";
 import { href, navigate, useAddress, useMediaQuery, useTrips, useTripTrack } from "../hooks.ts";
 
 const DAY_MS = 86_400_000;
-const PERIODS = [7, 30] as const;
+const PERIODS = [1, 7, 30] as const;
 
 const time = (ms: number) => new Date(ms).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 const speed = (n?: number) => (n == null ? "—" : `${number(n)} km/h`);
 const mapsUrl = (c: Coordinate) => `https://www.google.com/maps/search/?api=1&query=${c.latitude},${c.longitude}`;
+const routeUrl = (a: Coordinate, b: Coordinate) =>
+  `https://www.google.com/maps/dir/?api=1&origin=${a.latitude},${a.longitude}&destination=${b.latitude},${b.longitude}&travelmode=driving`;
 
 const message = (e: unknown) => (e instanceof Error ? e.message : "Something went wrong.");
 
@@ -66,13 +68,31 @@ function Places({ trip, full }: { trip: Trip; full?: boolean }) {
   const from = useAddress(trip.start);
   const to = useAddress(trip.end);
   if (!trip.start && !trip.end) return null;
-  const line = (label: "A" | "B", q: typeof from, c?: Coordinate) =>
-    c && (
-      <span className={`place ${full ? "full" : ""}`}>
-        <span className={`place-dot ${label === "A" ? "start" : "end"}`} aria-label={label === "A" ? "From" : "To"}>{full ? label : ""}</span>
-        <span className="place-text">{q.data ?? (q.isLoading ? "…" : `${c.latitude.toFixed(4)}, ${c.longitude.toFixed(4)}`)}</span>
+  const line = (label: "A" | "B", q: typeof from, c?: Coordinate) => {
+    if (!c) return null;
+    const text = q.data ?? (q.isLoading ? "…" : `${c.latitude.toFixed(4)}, ${c.longitude.toFixed(4)}`);
+    const dot = <span className={`place-dot ${label === "A" ? "start" : "end"}`} aria-hidden>{full ? label : ""}</span>;
+    // In the detail each end opens on a map; in the list the whole row is already a link.
+    if (full) {
+      return (
+        <a className="place full" href={mapsUrl(c)} target="_blank" rel="noreferrer">
+          {dot}
+          <span className="place-text">
+            <span className="muted tiny">{label === "A" ? "From" : "To"}</span>
+            <br />
+            {text}
+          </span>
+          <MapPin size={16} className="muted" aria-label="Show on map" />
+        </a>
+      );
+    }
+    return (
+      <span className="place">
+        {dot}
+        <span className="place-text">{text}</span>
       </span>
     );
+  };
   return (
     <span className="places">
       {line("A", from, trip.start)}
@@ -134,7 +154,9 @@ function TripDetail({ vin, trip }: { vin: string; trip: Trip }) {
         {endedAt && <div className="muted small">Ended {time(endedAt)}</div>}
       </div>
 
-      <Places trip={trip} full />
+      <section className="card" style={{ padding: "12px 14px" }} aria-label="From and to">
+        <Places trip={trip} full />
+      </section>
 
       {markers.length > 0 ? (
         <MapView markers={markers} route={route} className="map tall" />
@@ -151,18 +173,11 @@ function TripDetail({ vin, trip }: { vin: string; trip: Trip }) {
         <Tile icon={<Gauge size={16} />} label="Avg speed" value={speed(trip.avgSpeedKmh)} />
       </div>
 
-      <div className="row" style={{ flexWrap: "wrap" }}>
-        {trip.start && (
-          <a className="btn ghost small" href={mapsUrl(trip.start)} target="_blank" rel="noreferrer">
-            <MapPin size={16} /> Start in Google Maps
-          </a>
-        )}
-        {trip.end && (
-          <a className="btn ghost small" href={mapsUrl(trip.end)} target="_blank" rel="noreferrer">
-            <MapPin size={16} /> End in Google Maps
-          </a>
-        )}
-      </div>
+      {trip.start && trip.end && (
+        <a className="btn" href={routeUrl(trip.start, trip.end)} target="_blank" rel="noreferrer">
+          <Navigation size={18} /> Open this route in Google Maps
+        </a>
+      )}
     </div>
   );
 }
@@ -227,7 +242,7 @@ export function TripsView({ vin, tripId }: { vin: string; tripId?: string }) {
         <div className="segmented" role="group" aria-label="Period">
           {PERIODS.map((d) => (
             <button key={d} className={d === days ? "active" : undefined} aria-pressed={d === days} onClick={() => setDays(d)}>
-              {d} days
+              {d === 1 ? "1 day" : `${d} days`}
             </button>
           ))}
         </div>

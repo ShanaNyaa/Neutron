@@ -5,11 +5,12 @@ import { useSyncExternalStore } from "react";
  * reads a preference updates together when Settings changes it.
  */
 export type TyreUnit = "psi" | "kPa" | "bar";
-export type Prefs = { tyreUnit: TyreUnit };
+export type PickerStyle = "wheel" | "slider" | "dial";
+export type Prefs = { tyreUnit: TyreUnit; pickerStyle: PickerStyle };
 
 const KEY = "mottokar.prefs";
 // Most Malaysian tyre placards and petrol-station pumps read PSI.
-const DEFAULTS: Prefs = { tyreUnit: "psi" };
+const DEFAULTS: Prefs = { tyreUnit: "psi", pickerStyle: "wheel" };
 
 function read(): Prefs {
   try {
@@ -55,5 +56,11 @@ export function pressure(kpa: number | undefined, unit: TyreUnit) {
   if (unit === "bar") return (kpa / 100).toFixed(1);
   return `${Math.round(kpa)}`;
 }
+
+export const PICKER_STYLES: { value: PickerStyle; label: string; hint: string }[] = [
+  { value: "wheel", label: "Wheel", hint: "Scroll a drum, like a car's climate panel" },
+  { value: "slider", label: "Slider", hint: "Drag along a track" },
+  { value: "dial", label: "Dial", hint: "Swipe a ruler left and right" },
+];
 
 export const unitLabel = (unit: TyreUnit) => TYRE_UNITS.find((u) => u.value === unit)!.label;

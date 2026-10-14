@@ -1,11 +1,20 @@
-import { Download, LogOut, Monitor, Smartphone } from "lucide-react";
+import { Download, LogOut, Monitor, Smartphone, TabletSmartphone, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import type { WebVehicle } from "../api.ts";
+import { COMMANDS } from "../commands.ts";
+import { Picker } from "../components/Picker.tsx";
 import { AppearanceSettings } from "../components/ThemePicker.tsx";
-import { setPref, TYRE_UNITS, usePrefs } from "../prefs.ts";
+import { PICKER_STYLES, setPref, TYRE_UNITS, usePrefs } from "../prefs.ts";
 
 type InstallPrompt = Event & { prompt: () => Promise<void> };
+
+// One row per platform, so each person can find theirs at a glance.
+const INSTALL_STEPS: { icon: LucideIcon; platform: string; browser: string; steps: string }[] = [
+  { icon: Smartphone, platform: "iPhone and iPad", browser: "Safari", steps: "Tap Share, then Add to Home Screen." },
+  { icon: TabletSmartphone, platform: "Android", browser: "Chrome", steps: "Tap the ⋮ menu, then Install app (or Add to Home screen)." },
+  { icon: Monitor, platform: "Desktop", browser: "Chrome, Edge or Helium", steps: "Click the install icon at the right of the address bar." },
+];
 
 export function SettingsView({ account, vehicles, onSignOut }: { account: string | null; vehicles: WebVehicle[]; onSignOut: () => void }) {
   // Chrome, Edge and Android offer installing the app; Safari doesn't fire this.
@@ -29,6 +38,8 @@ export function SettingsView({ account, vehicles, onSignOut }: { account: string
       <AppearanceSettings />
 
       <UnitsCard />
+
+      <PickerCard />
 
       <section className="card">
         <h3 className="card-title">Proton Link account</h3>
@@ -71,8 +82,17 @@ export function SettingsView({ account, vehicles, onSignOut }: { account: string
                 <Download size={18} /> Install Mottokar
               </button>
             )}
-            <p className="row small muted"><Smartphone size={16} /> iPhone: Share, then Add to Home Screen. Android: menu, then Install app.</p>
-            <p className="row small muted"><Monitor size={16} /> Desktop Chrome, Edge or Helium: the install icon in the address bar.</p>
+            <ul className="list">
+              {INSTALL_STEPS.map(({ icon: Icon, platform, browser, steps }) => (
+                <li key={platform} className="list-row" style={{ padding: "10px 0" }}>
+                  <span className="list-icon"><Icon size={18} /></span>
+                  <span className="list-body">
+                    <strong>{platform} <span className="muted small" style={{ fontWeight: 400 }}>· {browser}</span></strong>
+                    <span className="small muted">{steps}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </section>
@@ -101,6 +121,34 @@ function UnitsCard() {
               {u.label}
             </button>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** How temperature and run time are picked in command sheets, with a live preview to try. */
+function PickerCard() {
+  const { pickerStyle } = usePrefs();
+  const sample = COMMANDS.find((c) => c.id === "climate_on")!.params![0];
+  const [value, setValue] = useState(sample.default);
+  const current = PICKER_STYLES.find((p) => p.value === pickerStyle)!;
+  return (
+    <section className="card">
+      <h3 className="card-title">Option picker</h3>
+      <p className="muted small" style={{ marginBottom: 12 }}>How you choose a temperature or run time before sending a command.</p>
+      <div className="segmented" role="radiogroup" aria-label="Option picker style">
+        {PICKER_STYLES.map((p) => (
+          <button key={p.value} role="radio" aria-checked={pickerStyle === p.value} className={pickerStyle === p.value ? "active" : ""} onClick={() => setPref("pickerStyle", p.value)}>
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <p className="muted small" style={{ margin: "8px 0 12px" }}>{current.hint}. Try it:</p>
+      <div className={`pickers pickers-${pickerStyle}`} style={{ ["--cols" as string]: 1, maxWidth: 320, marginInline: "auto" }}>
+        <div className="picker-field">
+          <span className="section-label" style={{ margin: 0 }}>{sample.label}</span>
+          <Picker key={pickerStyle} style={pickerStyle} param={sample} value={value} onChange={setValue} />
         </div>
       </div>
     </section>
