@@ -23,7 +23,5 @@ export const minutes = (m?: number) => {
 
 export const temp = (c?: number) => (c == null ? "—" : `${number(c, 1)} °C`);
 
-/** kPa to bar, which Malaysian tyre placards use. */
-export const bar = (kpa?: number) => (kpa == null ? "—" : `${number(kpa / 100, 1)} bar`);
 
 export { number };

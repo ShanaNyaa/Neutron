@@ -3,8 +3,9 @@ import type { ReactNode } from "react";
 
 import type { DataUsage, WebStatus, WebVehicle } from "../api.ts";
 import { MapView } from "../components/MapView.tsx";
-import { bar, km, number, temp } from "../format.ts";
-import { navigate, useDataUsage, useStatus } from "../hooks.ts";
+import { km, number, temp } from "../format.ts";
+import { navigate, useAddress, useDataUsage, useStatus } from "../hooks.ts";
+import { pressure, setPref, TYRE_UNITS, unitLabel, usePrefs } from "../prefs.ts";
 
 export const PLACES: Record<string, string> = {
   frontLeft: "front left",
@@ -101,13 +102,7 @@ export function StatusTiles({ status: s, tankLitres }: { status: WebStatus; tank
       <Tile icon={Gauge} title="Odometer" value={km(s.odometerKm)}>
         {s.avgFuelLPer100km != null && <span className="muted small">Average {number(s.avgFuelLPer100km, 1)} L/100 km</span>}
       </Tile>
-      <Tile icon={CircleGauge} title="Tyres" value={tyreWarn ? "Check pressure" : "OK"} tone={tyreWarn ? "warn" : undefined}>
-        <span className="muted small">
-          {bar(s.tyres?.frontLeft)} · {bar(s.tyres?.frontRight)}
-          <br />
-          {bar(s.tyres?.rearLeft)} · {bar(s.tyres?.rearRight)}
-        </span>
-      </Tile>
+      <TyreTile tyres={s.tyres} warn={tyreWarn} />
       {(s.serviceDueKm != null || s.serviceDueDays != null) && (
         <Tile
           icon={Wrench}
@@ -119,6 +114,23 @@ export function StatusTiles({ status: s, tankLitres }: { status: WebStatus; tank
         </Tile>
       )}
     </section>
+  );
+}
+
+/** Shown in the unit picked in Settings (PSI unless changed); tapping the tile cycles through them. */
+function TyreTile({ tyres, warn }: { tyres: WebStatus["tyres"]; warn: boolean }) {
+  const { tyreUnit } = usePrefs();
+  const next = TYRE_UNITS[(TYRE_UNITS.findIndex((u) => u.value === tyreUnit) + 1) % TYRE_UNITS.length];
+  const p = (kpa?: number) => pressure(kpa, tyreUnit);
+  return (
+    <button className="card tile tile-button" onClick={() => setPref("tyreUnit", next.value)} title={`Show in ${next.label}`} aria-label={`Tyre pressure in ${unitLabel(tyreUnit)}. Show in ${next.label}`}>
+      <span className="tile-head"><CircleGauge size={16} /> Tyres <span className="unit-chip">{unitLabel(tyreUnit)}</span></span>
+      <span className={`tile-value ${warn ? "warn" : ""}`}>{warn ? "Check pressure" : "OK"}</span>
+      <span className="tyre-grid small">
+        <span className="muted">Front</span><span>{p(tyres?.frontLeft)} · {p(tyres?.frontRight)}</span>
+        <span className="muted">Rear</span><span>{p(tyres?.rearLeft)} · {p(tyres?.rearRight)}</span>
+      </span>
+    </button>
   );
 }
 
@@ -134,9 +146,11 @@ function Tile({ icon: Icon, title, value, tone, children }: { icon: LucideIcon; 
 
 function LocationCard({ location, name }: { location: NonNullable<WebStatus["location"]>; name: string }) {
   const q = `${location.latitude},${location.longitude}`;
+  const address = useAddress(location);
   return (
     <section className="card">
-      <h3 className="card-title"><MapPin size={18} /> Parked here</h3>
+      <h3 className="card-title" style={{ marginBottom: 4 }}><MapPin size={18} /> Parked here</h3>
+      <p className="muted small" style={{ marginBottom: 12 }}>{address.data ?? (address.isLoading ? "Finding the address…" : `${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)}`)}</p>
       <MapView markers={[{ ...location, kind: "car", label: name }]} zoom={16} />
       <div className="row" style={{ marginTop: 12, flexWrap: "wrap" }}>
         <a className="btn small" href={`https://www.google.com/maps/search/?api=1&query=${q}`} target="_blank" rel="noreferrer">

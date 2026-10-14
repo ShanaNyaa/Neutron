@@ -43,7 +43,8 @@ export function CommandProvider({ children }: { children: ReactNode }) {
         );
         setRunning({ def, stage: "car", result });
         if (result.isOk) {
-          if (def.id === "engine_start" && result.isConfirmed) {
+          // Remote climate runs the engine too, and both stop by themselves when the time is up.
+          if ((def.id === "engine_start" || def.id === "climate_on") && result.isConfirmed) {
             setEngineRun({ vin: vehicle.vin!, endsAt: Date.now() + (params?.minutes ?? 10) * 60_000 });
           }
           if (def.id === "engine_stop") setEngineRun(null);
@@ -60,7 +61,7 @@ export function CommandProvider({ children }: { children: ReactNode }) {
 
   const run = useCallback(
     (vehicle: WebVehicle, def: CommandDef) => {
-      if (def.confirm || def.param || (vehicle.isPinRequired && !pin)) setPicked({ vehicle, def });
+      if (def.confirm || def.params?.length || (vehicle.isPinRequired && !pin)) setPicked({ vehicle, def });
       else void send(vehicle, def);
     },
     [pin, send],
@@ -92,12 +93,12 @@ function ConfirmSheet({ def, needsPin, onCancel, onSend }: {
   onCancel: () => void;
   onSend: (params: Record<string, number> | undefined, pin?: string) => void;
 }) {
-  const [value, setValue] = useState(def.param?.default);
+  const [values, setValues] = useState<Record<string, number>>(() => Object.fromEntries((def.params ?? []).map((p) => [p.key, p.default])));
   const [pin, setPin] = useState("");
   const Icon = def.icon;
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    onSend(def.param && value != null ? { [def.param.key]: value } : undefined, needsPin ? pin : undefined);
+    onSend(def.params?.length ? values : undefined, needsPin ? pin : undefined);
   };
   return (
     <div className="backdrop" onClick={(e) => e.target === e.currentTarget && onCancel()}>
@@ -108,18 +109,21 @@ function ConfirmSheet({ def, needsPin, onCancel, onSend }: {
           <span className="spacer" />
           <button type="button" className="btn ghost icon" onClick={onCancel} aria-label="Cancel"><X size={20} /></button>
         </div>
-        {def.param && (
-          <div className="stack" style={{ gap: 8 }}>
-            <span className="section-label" style={{ margin: 0 }}>{def.param.label}</span>
-            <div className="choices" role="radiogroup" aria-label={def.param.label}>
-              {def.param.options.map((o) => (
-                <button key={o.value} type="button" role="radio" aria-checked={value === o.value} className={`choice ${value === o.value ? "selected" : ""}`} onClick={() => setValue(o.value)}>
-                  {o.label}
-                </button>
-              ))}
+        {def.params?.map((param) => (
+          <div key={param.key} className="stack" style={{ gap: 8 }}>
+            <span className="section-label" style={{ margin: 0 }}>{param.label}</span>
+            <div className="choices" role="radiogroup" aria-label={param.label}>
+              {param.options.map((o) => {
+                const on = values[param.key] === o.value;
+                return (
+                  <button key={o.value} type="button" role="radio" aria-checked={on} className={`choice ${on ? "selected" : ""}`} onClick={() => setValues((v) => ({ ...v, [param.key]: o.value }))}>
+                    {o.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
-        )}
+        ))}
         {needsPin && (
           <label className="field">
             Vehicle PIN

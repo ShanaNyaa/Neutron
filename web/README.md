@@ -39,10 +39,25 @@ client/src/             React app (Vite)
 The status and trip mappers are imported from the mobile app's `src/providers/proton/` without
 changes, so a fix there applies to both apps.
 
+## Themes
+
+Settings → Appearance offers System, Light, Dark, or any of the terminal colour schemes from
+[iTerm2-Color-Schemes](https://iterm2colorschemes.com/) (MIT, see
+`client/public/themes-LICENSE.txt`). The list is generated into `client/public/themes.json`;
+to update it:
+
+```bash
+podman compose run --rm dev node scripts/build-themes.mjs
+```
+
 ## Data and security
 
 - Your Proton session tokens are kept in the `data` volume (`session.json`). Your password
   isn't stored. Sign out in the app, or run `podman volume rm web_data`, to remove them.
+- Addresses for trips and the parked car come from OpenStreetMap's Nominatim service, so the
+  server sends it those coordinates. Lookups are limited to one a second, as Nominatim asks,
+  and each answer is cached in `geocode.json` in the data volume.
+- Display preferences (theme, tyre pressure unit) are kept in the browser, per device.
 - The MQTT broker uses a self-signed certificate. It's saved to the data volume on first use and
   must match after that.
 - Ports are bound to `127.0.0.1` because the app can unlock your car. To use it from your phone,

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ChevronRight, CircleAlert, CircleCheck, Fuel, Lock, LockOpen, Power, RefreshCw, Route as RouteIcon, Snowflake } from "lucide-react";
 
 import type { WebStatus, WebVehicle } from "../api.ts";
@@ -48,8 +49,16 @@ export function CarView({ vehicle }: { vehicle: WebVehicle }) {
   );
 }
 
-function StatusLine({ status: s, refreshing, onRefresh }: { status?: WebStatus; refreshing: boolean; onRefresh: () => void }) {
+function StatusLine({ status: s, refreshing, onRefresh }: { status?: WebStatus; refreshing: boolean; onRefresh: () => Promise<unknown> }) {
   useNow(30_000);
+  // The server usually answers in a few milliseconds; keep spinning long enough to be seen.
+  const [spinning, setSpinning] = useState(false);
+  const refresh = async () => {
+    setSpinning(true);
+    await Promise.all([onRefresh().catch(() => {}), new Promise((r) => setTimeout(r, 700))]);
+    setSpinning(false);
+  };
+  const busy = spinning || refreshing;
   const open = [...Object.entries(s?.doors ?? {}), ...Object.entries(s?.windows ?? {})].filter(([, v]) => v === "open").map(([k]) => PLACES[k] ?? k);
   const parts = [s?.isParkingBrakeOn != null && `Parking brake ${s.isParkingBrakeOn ? "on" : "off"}`, s && `Reported ${ago(s.updatedAt)}`].filter(Boolean);
   return (
@@ -57,8 +66,8 @@ function StatusLine({ status: s, refreshing, onRefresh }: { status?: WebStatus; 
       <span className={`dot ${open.length || s?.lock === "unlocked" ? "warn" : "ok"}`} aria-hidden />
       <span className="small">{s ? open.length ? <span className="warn">{cap(open.join(", "))} open</span> : parts.join(" · ") : "Loading…"}</span>
       <span className="spacer" />
-      <button className="btn ghost icon" onClick={onRefresh} disabled={refreshing} aria-label="Refresh status">
-        <RefreshCw size={18} className={refreshing ? "spin" : ""} />
+      <button className="btn ghost icon refresh" onClick={refresh} disabled={busy} aria-label={busy ? "Refreshing" : "Refresh status"} aria-busy={busy}>
+        <RefreshCw size={18} className={busy ? "spin" : ""} />
       </button>
     </div>
   );

@@ -53,6 +53,7 @@ export const api = {
     request<Coordinate[]>(`/vehicles/${vin(v)}/trips/track?start=${startedAt}&end=${endedAt}`),
   scene: (v: string) => request<{ angles: SceneAngle[] }>(`/vehicles/${vin(v)}/scene`),
   dataUsage: (v: string) => request<DataUsage | null>(`/vehicles/${vin(v)}/data-usage`),
+  address: (lat: number, lng: number) => request<{ address: string | null }>(`/geocode?lat=${lat}&lng=${lng}`).then((r) => r.address),
   notices: () => request<Notice[]>("/notices"),
   markRead: (id: string) => request<{ ok: true }>(`/notices/${encodeURIComponent(id)}/read`, {}),
 

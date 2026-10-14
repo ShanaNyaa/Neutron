@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { Coordinate, Trip } from "../api.ts";
 import { MapView } from "../components/MapView.tsx";
 import { dateTime, km, minutes, number } from "../format.ts";
-import { href, navigate, useMediaQuery, useTrips, useTripTrack } from "../hooks.ts";
+import { href, navigate, useAddress, useMediaQuery, useTrips, useTripTrack } from "../hooks.ts";
 
 const DAY_MS = 86_400_000;
 const PERIODS = [7, 30] as const;
@@ -61,6 +61,26 @@ function Summary({ trips }: { trips: Trip[] }) {
   );
 }
 
+/** Where a trip started and ended, as Proton Link shows it. Addresses fill in as the server finds them. */
+function Places({ trip, full }: { trip: Trip; full?: boolean }) {
+  const from = useAddress(trip.start);
+  const to = useAddress(trip.end);
+  if (!trip.start && !trip.end) return null;
+  const line = (label: "A" | "B", q: typeof from, c?: Coordinate) =>
+    c && (
+      <span className={`place ${full ? "full" : ""}`}>
+        <span className={`place-dot ${label === "A" ? "start" : "end"}`} aria-label={label === "A" ? "From" : "To"}>{full ? label : ""}</span>
+        <span className="place-text">{q.data ?? (q.isLoading ? "…" : `${c.latitude.toFixed(4)}, ${c.longitude.toFixed(4)}`)}</span>
+      </span>
+    );
+  return (
+    <span className="places">
+      {line("A", from, trip.start)}
+      {line("B", to, trip.end)}
+    </span>
+  );
+}
+
 function TripList({ trips, selectedId }: { trips: Trip[]; selectedId?: string }) {
   return (
     <div className="stack">
@@ -85,6 +105,7 @@ function TripList({ trips, selectedId }: { trips: Trip[]; selectedId?: string })
                   <span className="muted small">
                     {km(trip.distanceKm)} · {minutes(trip.durationMin)} · {speed(trip.avgSpeedKmh)}
                   </span>
+                  <Places trip={trip} />
                 </span>
                 <ChevronRight size={18} aria-hidden="true" />
               </a>
@@ -112,6 +133,8 @@ function TripDetail({ vin, trip }: { vin: string; trip: Trip }) {
         <h2 className="card-title">{dateTime(trip.startedAt)}</h2>
         {endedAt && <div className="muted small">Ended {time(endedAt)}</div>}
       </div>
+
+      <Places trip={trip} full />
 
       {markers.length > 0 ? (
         <MapView markers={markers} route={route} className="map tall" />

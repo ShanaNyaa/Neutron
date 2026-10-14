@@ -510,6 +510,31 @@ label.field {
   font-size: 0.82rem;
 }
 
+.tile-button {
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.tile-button:hover {
+  border-color: var(--accent);
+}
+
+.unit-chip {
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.tyre-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 8px;
+}
+
 .tile-value {
   font-size: 1.3rem;
   font-weight: 700;
@@ -545,8 +570,13 @@ label.field {
   height: min(60dvh, 520px);
 }
 
+/* Dark map tiles follow the app's theme: a chosen theme sets data-scheme, "System" follows the OS. */
+:root[data-scheme="dark"] .map .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9);
+}
+
 @media (prefers-color-scheme: dark) {
-  .map .leaflet-tile-pane {
+  :root:not([data-scheme]) .map .leaflet-tile-pane {
     filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9);
   }
 }
@@ -569,6 +599,12 @@ label.field {
   gap: 8px;
   min-height: 32px;
   margin: -6px 0 -4px;
+}
+
+/* Disabled while spinning, but it shouldn't look greyed out. */
+.btn.refresh:disabled {
+  opacity: 1;
+  color: var(--accent);
 }
 
 .dot {
@@ -1065,6 +1101,61 @@ a.list-row:hover {
   }
 }
 
+.places {
+  display: grid;
+  gap: 2px;
+  margin-top: 4px;
+  min-width: 0;
+}
+
+.place {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 0.82rem;
+}
+
+.place-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.place.full {
+  align-items: flex-start;
+  font-size: 0.95rem;
+}
+
+.place.full .place-text {
+  white-space: normal;
+}
+
+.place-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.place.full .place-dot {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.place-dot.start {
+  background: #15803d;
+}
+
+.place-dot.end {
+  background: #c62828;
+}
+
 .stats.three {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -1074,7 +1165,32 @@ a.list-row:hover {
     padding: 12px 10px;
   }
 
-  .stats.three .tile-value {
+  .stats.three .tile-button {
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.tile-button:hover {
+  border-color: var(--accent);
+}
+
+.unit-chip {
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.tyre-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 8px;
+}
+
+.tile-value {
     font-size: 1.05rem;
   }
 }

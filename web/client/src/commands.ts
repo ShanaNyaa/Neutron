@@ -20,6 +20,9 @@ import {
 
 export type CommandParam = { key: string; label: string; options: { label: string; value: number }[]; default: number; unit?: string };
 
+// Proton Link's run-time choices for engine start and climate; the car may refuse others.
+const RUN_TIME: CommandParam = { key: "minutes", label: "Run for", default: 10, unit: "min", options: [3, 5, 8, 10].map((m) => ({ label: `${m} min`, value: m })) };
+
 export type CommandDef = {
   id: string;
   label: string;
@@ -27,7 +30,8 @@ export type CommandDef = {
   group: "doors" | "engine" | "climate" | "windows" | "find" | "charging";
   /** Asked before sending; the car does this in a public place. */
   confirm?: string;
-  param?: CommandParam;
+  /** Asked for in the confirmation sheet, in order. */
+  params?: CommandParam[];
 };
 
 /** Same ids as the server's CONTROLS. A car shows only the ones its capability list allows. */
@@ -42,8 +46,7 @@ export const COMMANDS: CommandDef[] = [
     icon: Power,
     group: "engine",
     confirm: "Start the engine remotely?",
-    // Proton Link's engine dialog choices; the car may refuse others.
-    param: { key: "minutes", label: "Run for", default: 10, unit: "min", options: [3, 5, 8, 10].map((m) => ({ label: `${m} min`, value: m })) },
+    params: [RUN_TIME],
   },
   { id: "engine_stop", label: "Stop engine", icon: PowerOff, group: "engine" },
   {
@@ -51,7 +54,11 @@ export const COMMANDS: CommandDef[] = [
     label: "Climate on",
     icon: Snowflake,
     group: "climate",
-    param: { key: "temp", label: "Temperature", default: 22, unit: "°C", options: [17, 18, 19, 20, 21, 22, 23, 24, 26, 28].map((t) => ({ label: `${t}°`, value: t })) },
+    params: [
+      { key: "temp", label: "Temperature", default: 22, unit: "°C", options: [17, 18, 19, 20, 21, 22, 23, 24, 26, 28].map((t) => ({ label: `${t}°`, value: t })) },
+      // Minutes, like engine start: tested on an S70, where 3 ran the climate for three minutes.
+      RUN_TIME,
+    ],
   },
   { id: "climate_off", label: "Climate off", icon: Fan, group: "climate" },
   { id: "defrost_on", label: "Defrost", icon: SunSnow, group: "climate" },

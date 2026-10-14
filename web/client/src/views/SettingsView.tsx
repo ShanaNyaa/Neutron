@@ -2,6 +2,8 @@ import { Download, LogOut, Monitor, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import type { WebVehicle } from "../api.ts";
+import { AppearanceSettings } from "../components/ThemePicker.tsx";
+import { setPref, TYRE_UNITS, usePrefs } from "../prefs.ts";
 
 type InstallPrompt = Event & { prompt: () => Promise<void> };
 
@@ -23,6 +25,10 @@ export function SettingsView({ account, vehicles, onSignOut }: { account: string
       <div className="page-head desktop-only">
         <h1>Settings</h1>
       </div>
+
+      <AppearanceSettings />
+
+      <UnitsCard />
 
       <section className="card">
         <h3 className="card-title">Proton Link account</h3>
@@ -75,5 +81,28 @@ export function SettingsView({ account, vehicles, onSignOut }: { account: string
         Mottokar is unofficial and not affiliated with Proton. It uses the same service as Proton Link, so Proton can change or block it at any time.
       </p>
     </div>
+  );
+}
+
+function UnitsCard() {
+  const { tyreUnit } = usePrefs();
+  return (
+    <section className="card">
+      <h3 className="card-title">Units</h3>
+      <div className="row" style={{ justifyContent: "space-between", flexWrap: "wrap" }}>
+        <span>
+          Tyre pressure
+          <br />
+          <span className="muted small">Proton reports kPa. You can also tap the Tyres tile to switch.</span>
+        </span>
+        <div className="segmented" role="radiogroup" aria-label="Tyre pressure unit">
+          {TYRE_UNITS.map((u) => (
+            <button key={u.value} role="radio" aria-checked={tyreUnit === u.value} className={tyreUnit === u.value ? "active" : ""} onClick={() => setPref("tyreUnit", u.value)}>
+              {u.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

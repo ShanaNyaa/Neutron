@@ -37,6 +37,16 @@ export const useScene = (vin?: string) =>
 export const useDataUsage = (vin?: string) =>
   useQuery({ queryKey: ["data-usage", vin], queryFn: () => api.dataUsage(vin!), enabled: !!vin, staleTime: 30 * 60_000, retry: false });
 
+/** A street address for a spot, looked up once by the server and cached there. */
+export const useAddress = (c?: { latitude: number; longitude: number } | null) =>
+  useQuery({
+    queryKey: ["address", c && c.latitude.toFixed(4), c && c.longitude.toFixed(4)],
+    queryFn: () => api.address(c!.latitude, c!.longitude),
+    enabled: !!c,
+    staleTime: Infinity,
+    retry: false,
+  });
+
 export const useNotices = () =>
   useQuery({ queryKey: ["notices"], queryFn: api.notices, refetchInterval: 5 * 60_000, staleTime: 60_000, retry });
 

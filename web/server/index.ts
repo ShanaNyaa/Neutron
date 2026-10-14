@@ -8,6 +8,7 @@ import { stream } from "hono/streaming";
 import { formatPhone } from "../../src/providers/proton/format.ts";
 import { login, newDeviceId, normalizeMsisdn, ProtonApi, ProtonError, type ProtonSession } from "./proton/api.ts";
 import { createClient, type ProtonClient } from "./proton/client.ts";
+import { geocoder } from "./geocode.ts";
 import { sessionStore } from "./session-store.ts";
 
 const PORT = Number(process.env.PORT ?? 3001);
@@ -16,6 +17,7 @@ const DATA_DIR = process.env.DATA_DIR ?? "/data";
 const ALLOWED_HOSTS = (process.env.ALLOWED_HOSTS ?? "localhost,127.0.0.1").split(",").map((h) => h.trim());
 
 const store = sessionStore(DATA_DIR);
+const geo = geocoder(DATA_DIR);
 let session: ProtonSession | null = await store.load();
 let client: ProtonClient | null = null;
 
@@ -124,6 +126,15 @@ app.get("/api/scene/:pack/:file", async (c) => {
 });
 
 app.get("/api/notices", async (c) => c.json(await proton().getNotices()));
+
+// Signed-in only, so the server isn't an open proxy to Nominatim.
+app.get("/api/geocode", async (c) => {
+  proton();
+  const lat = Number(c.req.query("lat"));
+  const lng = Number(c.req.query("lng"));
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return c.json({ error: "lat and lng are required" }, 400);
+  return c.json({ address: await geo.address(lat, lng) });
+});
 
 app.post("/api/notices/:id/read", async (c) => {
   await proton().markNoticeRead(c.req.param("id"));

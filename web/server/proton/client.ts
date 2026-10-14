@@ -29,7 +29,11 @@ const has = (caps: Ability[], family: string, name?: RegExp) => caps.some((c) =>
 const CONTROLS: Record<string, { needs: (caps: Ability[]) => boolean; build: (p: Params) => ControlRequest }> = {
   lock: { needs: (c) => has(c, "RDL") || has(c, "RDU"), build: () => ({ serviceKey: "RDL-OFF" }) },
   unlock: { needs: (c) => has(c, "RDU"), build: () => ({ serviceKey: "RDU-ON" }) },
-  climate_on: { needs: (c) => has(c, "RCE"), build: (p) => ({ serviceKey: "RCE-ON", parameters: [{ key: "rce.temp", stringVal: String(p.temp ?? 22) }] }) },
+  climate_on: {
+    needs: (c) => has(c, "RCE"),
+    // Without a duration the car uses its default run time.
+    build: (p) => ({ serviceKey: "RCE-ON", duration: p.minutes != null ? Number(p.minutes) : null, parameters: [{ key: "rce.temp", stringVal: String(p.temp ?? 22) }] }),
+  },
   climate_off: { needs: (c) => has(c, "RCE"), build: () => ({ serviceKey: "RCE-OFF" }) },
   defrost_on: { needs: (c) => has(c, "RCE", /defrost/i), build: () => ({ serviceKey: "RCE-DefrostON" }) },
   horn_lights: { needs: (c) => has(c, "RHL"), build: () => ({ serviceKey: "RHL-HornAndLight" }) },
