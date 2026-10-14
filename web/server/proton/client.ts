@@ -248,7 +248,26 @@ export function createClient(api: ProtonApi, dataDir: string) {
     async getStatus(vin: string) {
       const s = (await api.atlas<AtlasVehicleStatus>("iot/function/getVehicleStatus", { method: "POST", body: { vin } })) ?? {};
       const at = coord(s.latitude, s.longitude);
-      return { ...mapStatus(s), location: at ? { ...at, updatedAt: typeof s.updateTime === "number" ? s.updateTime : undefined } : null };
+      const raw = Number(s.distanceToService);
+      return {
+        ...mapStatus(s),
+        // The shared mapper hides 0 (it can mean "no interval set"); the web app shows it as reported.
+        serviceDueKm: s.distanceToService != null && s.distanceToService !== "" && Number.isFinite(raw) ? raw : undefined,
+        location: at ? { ...at, updatedAt: typeof s.updateTime === "number" ? s.updateTime : undefined } : null,
+        // Sent by the server but not decoded yet (docs/proton-integration.md): passed through raw
+        // so they can be watched and worked out.
+        experimental: {
+          seatBeltDriver: s.seatBeltStatusDriver,
+          seatBeltPassenger: s.seatBeltStatusPassenger,
+          gear: s.transimissionGearPostion ?? s.transmissionGearPosition,
+          coolantTemp: s.engineCoolantTemperature,
+          coolantValid: s.engineCoolantTemperatureValidity,
+          powerMode: s.powerMode,
+          powerSource: s.powerSource,
+          engineSpeed: s.engineSpeed,
+          speed: s.speed,
+        },
+      };
     },
 
     /** The layer pack per camera angle; the layers are served by /api/scene/:pack/:file. */

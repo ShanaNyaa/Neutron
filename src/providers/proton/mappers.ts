@@ -70,6 +70,10 @@ export type AtlasVehicleStatus = Partial<{
   tyrePreWarningLeftRear: number;
   tyrePreWarningRightFront: number;
   tyrePreWarningRightRear: number;
+  /** 12V battery voltage. Sent by the server but not read by Proton Link 2.1.0. */
+  voltage: string | number;
+  /** 0 = OK. Also not read by Proton Link; the capability list names it "Oil Pressure Warning". */
+  engineOilPressureWarning: string | number;
 }> &
   Record<string, unknown>;
 
@@ -159,6 +163,8 @@ export function mapStatus(s: AtlasVehicleStatus): VehicleStatus {
     const w = int(s[`tyrePreWarning${pos}`]);
     if (w != null && w !== 0) warnings.push(`Tyre pressure: ${label(pos).toLowerCase()}`);
   });
+  const oilWarning = int(s.engineOilPressureWarning) != null ? int(s.engineOilPressureWarning) !== 0 : undefined;
+  if (oilWarning) warnings.push("Oil pressure warning");
 
   const battery = num(s.powerBatteryLevel);
   // MainStatusUtils: electricParkBrakeStatus "1" means engaged.
@@ -210,6 +216,8 @@ export function mapStatus(s: AtlasVehicleStatus): VehicleStatus {
     // "0" is the car's "not set" (as with airConditionTemperature), reported after a service until
     // the next interval is programmed; only a negative value means overdue.
     serviceDueKm: nonzero(num(s.distanceToService)),
+    batteryVoltage: positive(num(s.voltage)),
+    isOilPressureLow: oilWarning,
     serviceDueDays: nonzero(num(s.daysToService)),
   };
 }

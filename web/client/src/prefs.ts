@@ -6,11 +6,16 @@ import { useSyncExternalStore } from "react";
  */
 export type TyreUnit = "psi" | "kPa" | "bar";
 export type PickerStyle = "wheel" | "slider" | "dial";
-export type Prefs = { tyreUnit: TyreUnit; pickerStyle: PickerStyle };
+export type Prefs = {
+  tyreUnit: TyreUnit;
+  pickerStyle: PickerStyle;
+  /** Car condition widgets in order; null means the default set. */
+  conditionWidgets: string[] | null;
+};
 
 const KEY = "mottokar.prefs";
 // Most Malaysian tyre placards and petrol-station pumps read PSI.
-const DEFAULTS: Prefs = { tyreUnit: "psi", pickerStyle: "wheel" };
+const DEFAULTS: Prefs = { tyreUnit: "psi", pickerStyle: "wheel", conditionWidgets: null };
 
 function read(): Prefs {
   try {

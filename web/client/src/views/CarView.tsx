@@ -7,7 +7,7 @@ import { useCommands } from "../components/CommandRunner.tsx";
 import { commandById, COMMANDS, type CommandDef } from "../commands.ts";
 import { ago, km, number, temp } from "../format.ts";
 import { href, useMediaQuery, useNow, useStatus, useTrips } from "../hooks.ts";
-import { cap, ConditionPanel, PLACES } from "./ConditionView.tsx";
+import { battery, cap, ConditionPanel, PLACES } from "./ConditionView.tsx";
 
 /**
  * The home screen. On a phone it fits one screen, as Proton's own app does: the readings that
@@ -204,14 +204,15 @@ function TripsCard({ vehicle, status: s }: { vehicle: WebVehicle; status?: WebSt
 
 function ConditionCard({ status: s }: { status?: WebStatus }) {
   const overdue = (s?.serviceDueKm ?? 0) < 0 || (s?.serviceDueDays ?? 0) < 0;
-  const issues = [...(s?.warnings ?? []), ...(overdue ? ["Service overdue"] : [])];
+  const lowBattery = s?.batteryVoltage != null && battery(s.batteryVoltage).level === "error";
+  const issues = [...(lowBattery ? [`12V battery low (${s!.batteryVoltage!.toFixed(1)} V)`] : []), ...(s?.warnings ?? []), ...(overdue ? ["Service overdue"] : [])];
   const ok = !issues.length;
   return (
     <a className="home-card" href={href({ name: "condition" })}>
       <span className={`list-icon ${ok ? "" : "accent"}`}>{ok ? <CircleCheck size={20} /> : <CircleAlert size={20} />}</span>
       <span className="list-body">
         <strong>Car condition</strong>
-        <span className={`small ${ok ? "muted" : "warn"}`}>{s ? (ok ? "Doors, windows and tyres OK" : issues.slice(0, 2).join(" · ")) : "Loading…"}</span>
+        <span className={`small ${ok ? "muted" : "warn"}`}>{s ? (ok ? "Doors, windows, tyres and battery OK" : issues.slice(0, 2).join(" · ")) : "Loading…"}</span>
       </span>
       <ChevronRight size={18} className="muted" />
     </a>

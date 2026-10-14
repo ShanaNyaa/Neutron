@@ -57,7 +57,8 @@ podman compose run --rm dev node scripts/build-themes.mjs
 - Addresses for trips and the parked car come from OpenStreetMap's Nominatim service, so the
   server sends it those coordinates. Lookups are limited to one a second, as Nominatim asks,
   and each answer is cached in `geocode.json` in the data volume.
-- Display preferences (theme, tyre pressure unit) are kept in the browser, per device.
+- Display preferences (theme, tyre pressure unit, option picker style, and the Car condition
+  widgets and their order) are kept in the browser, per device.
 - The MQTT broker uses a self-signed certificate. It's saved to the data volume on first use and
   must match after that.
 - Ports are bound to `127.0.0.1` because the app can unlock your car. To use it from your phone,

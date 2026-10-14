@@ -510,7 +510,164 @@ label.field {
   font-size: 0.82rem;
 }
 
+/* Car condition widgets: two columns of tiles; wide widgets span the row. */
+.widgets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.slot {
+  position: relative;
+  min-width: 0;
+  /* A long press shouldn't select text or open the phone's callout menu. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.slot.wide {
+  grid-column: 1 / -1;
+}
+
+.slot-inner {
+  height: 100%;
+}
+
+.slot-inner > .card {
+  height: 100%;
+}
+
+.widgets .tile {
+  padding: 12px;
+  gap: 2px;
+}
+
+.widgets .tile-value {
+  font-size: 1.15rem;
+}
+
+.arranging .slot {
+  touch-action: none;
+  cursor: grab;
+}
+
+/* While arranging, widgets don't respond to taps (no tyre-unit cycling, no map panning).
+   The wiggle is on the card, so it doesn't fight the drag and slide transforms on .slot-inner. */
+.arranging .slot-inner {
+  pointer-events: none;
+}
+
+.arranging .slot-inner > * {
+  animation: wiggle 0.28s ease-in-out infinite alternate;
+}
+
+.arranging .slot:nth-child(even) .slot-inner > * {
+  animation-delay: -0.14s;
+}
+
+.slot.dragging {
+  z-index: 10;
+  cursor: grabbing;
+}
+
+.slot.dragging .slot-inner {
+  filter: drop-shadow(0 12px 24px rgb(0 0 0 / 0.35));
+}
+
+.slot.dragging .slot-inner > * {
+  animation: none;
+}
+
+.slot-remove {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  background: var(--error);
+  color: #fff;
+  padding: 0;
+}
+
+.arrange-hint {
+  margin: -6px 0 -2px;
+}
+
+@keyframes wiggle {
+  from {
+    transform: rotate(-0.6deg);
+  }
+  to {
+    transform: rotate(0.6deg);
+  }
+}
+
+.map.short {
+  height: 170px;
+}
+
+.chip-mini {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 0.68rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.tile-head .chip-mini {
+  margin-left: auto;
+}
+
+.custom-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.custom-toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.custom-toggle strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 6px;
+}
+
+.custom-toggle strong .chip-mini {
+  margin-left: 0;
+}
+
+.custom-toggle input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+
+.custom-move {
+  display: flex;
+  flex: none;
+}
+
 .tile-button {
+  width: 100%;
   font: inherit;
   color: inherit;
   text-align: left;
@@ -522,6 +679,7 @@ label.field {
 
 .unit-chip {
   margin-left: auto;
+  flex: none;
   padding: 0 6px;
   border-radius: 6px;
   border: 1px solid var(--border);
@@ -529,10 +687,51 @@ label.field {
   font-weight: 600;
 }
 
-.tyre-grid {
+/* Front-left, car, front-right on top; rear-left and rear-right below, beside the car. */
+.tyre-car {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0 8px;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 8px;
+  margin-top: 4px;
+}
+
+.tyre-svg {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.tyre-svg .body {
+  fill: var(--surface-2);
+  stroke: var(--muted);
+  stroke-width: 1.5;
+}
+
+.tyre-svg .glass {
+  fill: var(--border);
+}
+
+.tyre-svg .wheel {
+  fill: var(--text);
+}
+
+.tyre-svg .wheel.warn {
+  fill: var(--warn);
+}
+
+.tyre-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.9;
+}
+
+.tyre-value.left {
+  text-align: right;
+}
+
+.tyre-value.warn {
+  color: var(--warn);
 }
 
 .tile-value {
@@ -617,6 +816,26 @@ label.field {
 
 .dot.warn {
   background: var(--warn);
+}
+
+.dot.error {
+  background: var(--error);
+}
+
+.diag > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+}
+
+.diag-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  text-align: right;
 }
 
 .hero2 {
@@ -1388,32 +1607,7 @@ a.list-row:hover {
     padding: 12px 10px;
   }
 
-  .stats.three .tile-button {
-  font: inherit;
-  color: inherit;
-  text-align: left;
-}
-
-.tile-button:hover {
-  border-color: var(--accent);
-}
-
-.unit-chip {
-  margin-left: auto;
-  padding: 0 6px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  font-size: 0.7rem;
-  font-weight: 600;
-}
-
-.tyre-grid {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0 8px;
-}
-
-.tile-value {
+  .stats.three .tile-value {
     font-size: 1.05rem;
   }
 }

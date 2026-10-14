@@ -298,6 +298,36 @@ Unknown: `usageMode`, `winPos*` (only 8 is decoded), `drvVentDetail` and
 `passVentDetail` (only 3 is decoded), the `tyreStatus*` unit, `direction`, and the gear
 position values.
 
+#### Fields the server sends but Proton Link doesn't read
+
+The list above comes from `VehicleStatus.java`, so it only covers what the app reads. A live
+`getVehicleStatus` response for a parked 2025 S70 (October 2026) also carried these keys,
+which are in neither the app nor the OpenAPI index:
+
+| Key | Seen | Meaning |
+|---|---|---|
+| `voltage` | `13` | 12V battery voltage, in volts. A healthy resting battery reads about 12.4–12.8 and a running engine 13–14.5. The capability list has a matching "Low voltage warning" item (`A001X005Y002`). |
+| `engineOilPressureWarning` | `0` | Oil pressure warning, 0 = OK. Capability item "Oil Pressure Warning" (`A001X003Y021`). |
+| `engineCoolantTemperature`, `…Validity` | `1.31`, `0` | Coolant temperature; validity 0 means not valid (engine off). Unit unconfirmed. |
+| `seatBeltStatusDriver`, `…Passenger`, `…LeftFront`, `…RightFront` | `0` | Seat belt state. The values aren't decoded. |
+| `transimissionGearPostion` | `1` | Gear position, with the same misspelt key as the documented one. 1 while parked, probably P; other values unknown. |
+| `powerMode`, `powerSource` | `1`, `0` | Ignition and power state. Not decoded. |
+| `brakePedalDepressed`, `…Validity` | `0`, `1` | Brake pedal pressed. |
+| `engineSpeed`, `…Validity`, `speed` | `0` | Live engine speed and road speed. |
+| `aveFuelConsumptionInLatestDrivingCycle` | | Average consumption over the last drive. |
+| `posCanBeTrusted`, `carLocatorStatUploadEn` | `true` | The position fix is good; location upload is on. |
+| `latitudeOriginal`, `longitudeOriginal` | | The position before any datum shift (see `marsCoordinates`). |
+| `taskId`, `requestId`, `lastUpdate` | | The request that produced the report, and when the server stored it (ms). |
+
+`distanceToService` read `0` on that car. Mobile Mottokar treats 0 as "no interval set"
+(the car reports it after a service until the next interval is programmed); another
+third-party app shows it as "Service overdue". Which is right isn't known. The web app
+shows it as reported.
+
+`app/v1/vehicle/realtimeData` (legacy, above) answered "Parameter error" with `envType`
+empty, `prod` or `PROD` and `appId=protonlink_01`, so its nested maintenance section
+couldn't be checked.
+
 ### Legacy (unused in 2.1.0)
 
 Nothing in 2.1.0 calls these.

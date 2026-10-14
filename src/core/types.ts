@@ -54,6 +54,8 @@ export type VehicleStatus = {
   /** As reported by the car, not derived from `tyres`. */
   tyreWarnings?: Partial<Record<TyrePosition, boolean>>;
   batteryVoltage?: number;
+  /** The car's oil pressure warning is on. */
+  isOilPressureLow?: boolean;
   avgFuelLPer100km?: number;
   avgSpeedKmh?: number;
   /** Live faults worth a chip: open doors, tyre pressure, a low 12V battery. Not maintenance. */

@@ -53,3 +53,6 @@ Docs: https://docs.expo.dev/eas/index.md
 - `web/server/proton/` ports `src/providers/proton/` to Node. It imports `src/providers/proton/mappers.ts`, `format.ts` and `src/core/types.ts` unchanged. After changing those files, run the web typecheck too.
 - `web/` is excluded from the root `tsconfig.json` and ESLint config; it has its own `web/tsconfig.json`.
 - Keep the server ports bound to `127.0.0.1` and keep the JSON-only and `ALLOWED_HOSTS` checks in `web/server/index.ts`: the app can unlock the car.
+- Commands act on a real car. Test the UI with fake responses (Playwright `page.route` on `/api/vehicles/*/commands/*` or `/status`), not by sending commands, unless the user asks for a real one.
+- Car condition widgets are listed in `WIDGETS` in `web/client/src/views/ConditionView.tsx`; add a reading there and, if it should show by default, to `DEFAULT_WIDGETS`. Layout, units, picker style and theme live in `web/client/src/prefs.ts` and `theme.ts` (per device, localStorage).
+- Status fields Proton sends but nobody has decoded are passed through raw under `experimental` in `web/server/proton/client.ts` and listed in `docs/proton-integration.md`. Decode them there before giving them proper labels.
