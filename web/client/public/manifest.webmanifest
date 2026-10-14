@@ -1,6 +1,6 @@
 {
-  "name": "Mottokar",
-  "short_name": "Mottokar",
+  "name": "Neutron",
+  "short_name": "Neutron",
   "description": "Lock, start and check your Proton car.",
   "start_url": "/",
   "scope": "/",

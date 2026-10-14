@@ -31,7 +31,7 @@ export function CommandProvider({ children }: { children: ReactNode }) {
   const [running, setRunning] = useState<Running | null>(null);
   // Memory only: asked for again after a reload.
   const [pin, setPin] = useState("");
-  const [engineRun, setEngineRun] = useStored<EngineRun>("mottokar.engineRun", null);
+  const [engineRun, setEngineRun] = useStored<EngineRun>("neutron.engineRun", null);
   const refresh = useRefreshAfterCommand();
 
   const send = useCallback(

@@ -45,7 +45,7 @@ export function SettingsView({ account, vehicles, onSignOut }: { account: string
         <h3 className="card-title">Proton Link account</h3>
         <p>{account ?? "Signed in"}</p>
         <p className="muted small" style={{ marginTop: 4 }}>
-          Your session is kept on the Mottokar server, not in this browser. Signing out removes it.
+          Your session is kept on the Neutron server, not in this browser. Signing out removes it.
         </p>
         <button className="btn danger" style={{ marginTop: 12 }} onClick={onSignOut}>
           <LogOut size={18} /> Sign out
@@ -74,12 +74,12 @@ export function SettingsView({ account, vehicles, onSignOut }: { account: string
       <section className="card">
         <h3 className="card-title">Use it like an app</h3>
         {installed ? (
-          <p className="muted small">Mottokar is installed on this device.</p>
+          <p className="muted small">Neutron is installed on this device.</p>
         ) : (
           <div className="stack" style={{ gap: 10 }}>
             {install && (
               <button className="btn primary" onClick={() => install.prompt().then(() => setInstall(null))}>
-                <Download size={18} /> Install Mottokar
+                <Download size={18} /> Install Neutron
               </button>
             )}
             <ul className="list">
@@ -98,7 +98,8 @@ export function SettingsView({ account, vehicles, onSignOut }: { account: string
       </section>
 
       <p className="muted tiny">
-        Mottokar is unofficial and not affiliated with Proton. It uses the same service as Proton Link, so Proton can change or block it at any time.
+        Neutron is unofficial and not affiliated with Proton. It uses the same service as Proton Link, so Proton can change or block it at any time.
+        It's built on <a href="https://github.com/zekr89/mottokar" target="_blank" rel="noreferrer">Mottokar</a> by Zackry Rosli and is licensed under GPL-3.0.
       </p>
     </div>
   );

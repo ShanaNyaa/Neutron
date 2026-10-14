@@ -1,6 +1,7 @@
-# Mottokar web
+# Neutron
 
-A browser version of Mottokar for Proton Link cars. It's a React app plus a small Node server.
+Neutron is a web app for Proton Link cars, built on the [Mottokar](https://github.com/zekr89/mottokar)
+mobile app ("Neutron" is a working name). It's a React app plus a small Node server.
 The browser can't call Proton directly: Proton's API sends no CORS headers, and command results
 arrive over MQTT on a raw TLS socket. So the server signs in to Proton, makes the calls, and
 listens for results.

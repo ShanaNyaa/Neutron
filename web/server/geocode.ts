@@ -7,7 +7,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
  * 4 decimals (about 11 m), so a car parked in the same spot is looked up once.
  */
 const ENDPOINT = "https://nominatim.openstreetmap.org/reverse";
-const USER_AGENT = "Mottokar/1.0 (self-hosted personal car app; https://github.com/ShanaNyaa/mottokar)";
+const USER_AGENT = "Neutron/1.0 (self-hosted personal car app; https://github.com/ShanaNyaa/mottokar)";
 const SPACING_MS = 1100;
 
 type Nominatim = {

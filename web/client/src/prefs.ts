@@ -13,7 +13,7 @@ export type Prefs = {
   conditionWidgets: string[] | null;
 };
 
-const KEY = "mottokar.prefs";
+const KEY = "neutron.prefs";
 // Most Malaysian tyre placards and petrol-station pumps read PSI.
 const DEFAULTS: Prefs = { tyreUnit: "psi", pickerStyle: "wheel", conditionWidgets: null };
 

@@ -29,7 +29,7 @@ export function App() {
     return () => signedOutEvent.removeEventListener("signedout", onSignedOut);
   }, [client]);
 
-  if (error) return <main className="center"><p className="error">Can’t reach the Mottokar server: {error}</p></main>;
+  if (error) return <main className="center"><p className="error">Can’t reach the Neutron server: {error}</p></main>;
   if (!session) return <main className="center"><LoaderCircle className="spin muted" /></main>;
   if (!session.signedIn)
     return (
@@ -91,7 +91,7 @@ function SignIn({ notice, onDone }: { notice: string | null; onDone: (s: Session
       <form className="card signin" onSubmit={submit}>
         <Logo size={52} />
         <div>
-          <h1>Mottokar</h1>
+          <h1>Neutron</h1>
           <p className="muted">Sign in with your Proton Link account.</p>
         </div>
         {notice && <p className="banner warn small" role="status">{notice}</p>}
@@ -125,16 +125,16 @@ function Home({ account, onSignOut }: { account: string | null; onSignOut: () =>
   const route = useRoute();
   const vehicles = useVehicles();
   const notices = useNotices();
-  const [savedVin, setVin] = useStored<string | null>("mottokar.vin", null);
+  const [savedVin, setVin] = useStored<string | null>("neutron.vin", null);
   const list = vehicles.data ?? [];
   const vehicle: WebVehicle | undefined = list.find((v) => v.vin === savedVin) ?? list[0];
   const unread = notices.data?.filter((n) => !n.isRead).length ?? 0;
-  // Proton's app titles the home screen with the plate; the sidebar already says Mottokar.
+  // Proton's app titles the home screen with the plate; the sidebar already says Neutron.
   const title =
-    route.name === "car" ? (vehicle?.plate ?? vehicle?.name ?? "Mottokar") : route.name === "condition" ? "Car condition" : NAV.find((n) => n.route.name === route.name)!.label;
+    route.name === "car" ? (vehicle?.plate ?? vehicle?.name ?? "Neutron") : route.name === "condition" ? "Car condition" : NAV.find((n) => n.route.name === route.name)!.label;
 
   useEffect(() => {
-    document.title = route.name === "car" ? "Mottokar" : `${title} · Mottokar`;
+    document.title = route.name === "car" ? "Neutron" : `${title} · Neutron`;
 
   }, [route.name, title]);
 
@@ -160,7 +160,7 @@ function Home({ account, onSignOut }: { account: string | null; onSignOut: () =>
   return (
     <div className="shell">
       <aside className="sidebar">
-        <div className="brand"><Logo /> Mottokar</div>
+        <div className="brand"><Logo /> Neutron</div>
         {picker}
         <nav className="stack" style={{ gap: 2 }} aria-label="Main">{navItems(true)}</nav>
         <div className="sidebar-foot small muted">{account}</div>

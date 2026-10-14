@@ -40,9 +40,9 @@ Docs: https://docs.expo.dev/eas/index.md
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
 
-## Web app (`web/`)
+## Web app: Neutron (`web/`)
 
-`web/` is a separate React (Vite) + Node (Hono) app for Proton cars. The Expo rules above don't apply to it. See `web/README.md`.
+`web/` is Neutron (a working name), a separate React (Vite) + Node (Hono) app for Proton cars, built on this repo's Mottokar mobile app. The Expo rules above don't apply to it. See `web/README.md`.
 
 - Run everything through Podman, from `web/`. Never install Node packages on the host:
   - `podman compose up`: dev server on http://localhost:5173

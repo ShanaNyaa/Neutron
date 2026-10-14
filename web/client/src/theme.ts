@@ -7,7 +7,7 @@ export type ThemeChoice =
   | { kind: "dark" }
   | { kind: "scheme"; name: string; c: string[] };
 
-const KEY = "mottokar.theme";
+const KEY = "neutron.theme";
 
 // Copied from styles.css (:root and its prefers-color-scheme: dark block).
 const LIGHT: Record<string, string> = {
