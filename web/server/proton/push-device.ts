@@ -63,5 +63,6 @@ export async function registerPushDevice(api: ProtonApi): Promise<string | null>
 export async function bindPushDevice(api: ProtonApi, deviceId: string) {
   await api
     .atlas("information/mobileSync/integrated/replenish", { method: "POST", body: { deviceId, uniquelyId: api.deviceId.slice(0, 16) } })
-    .catch((e) => console.warn(`[push] Binding the push device failed: ${(e as Error).message}`));
+    // "duplicate deviceId reported" means it's already bound to this account, which is fine.
+    .catch((e) => !/duplicate/i.test((e as Error).message) && console.warn(`[push] Binding the push device failed: ${(e as Error).message}`));
 }

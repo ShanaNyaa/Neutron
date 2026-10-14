@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono, type Context } from "hono";
@@ -96,7 +98,37 @@ app.get("/api/vehicles/:vin/trips/track", async (c) => {
   return c.json(await proton().getTripTrack(c.req.param("vin"), start, end));
 });
 
+app.get("/api/vehicles/:vin/scene", async (c) => c.json(await proton().getScene(c.req.param("vin"))));
+
+app.get("/api/vehicles/:vin/data-usage", async (c) => c.json(await proton().getDataUsage(c.req.param("vin"))));
+
+const IMAGE_TYPES: Record<string, string> = { png: "image/png", webp: "image/webp", jpg: "image/jpeg", jpeg: "image/jpeg" };
+
+// Serves the cached layer pictures; needs no Proton session.
+app.get("/api/scene/:pack/:file", async (c) => {
+  const { pack, file } = c.req.param();
+  const match = /^[A-Za-z0-9_.-]+\.(png|webp|jpe?g)$/.exec(file);
+  if (!/^[0-9a-fA-F]{8,64}-(top|fortyFive)$/.test(pack) || !match) return c.json({ error: "Not found" }, 404);
+  const root = path.resolve(DATA_DIR, "scene");
+  const full = path.resolve(root, pack, file);
+  if (!full.startsWith(root + path.sep)) return c.json({ error: "Not found" }, 404);
+  try {
+    const data = await readFile(full);
+    return c.body(new Uint8Array(data), 200, {
+      "Content-Type": IMAGE_TYPES[match[1].toLowerCase()],
+      "Cache-Control": "public, max-age=31536000, immutable",
+    });
+  } catch {
+    return c.json({ error: "Not found" }, 404);
+  }
+});
+
 app.get("/api/notices", async (c) => c.json(await proton().getNotices()));
+
+app.post("/api/notices/:id/read", async (c) => {
+  await proton().markNoticeRead(c.req.param("id"));
+  return c.json({ ok: true });
+});
 
 /**
  * Streams newline-delimited JSON: `{"stage":"cloud"}` once Proton accepts the command,

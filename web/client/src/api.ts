@@ -1,10 +1,14 @@
 import type { Coordinate, Notice, Trip, Vehicle, VehicleStatus } from "@/core/types";
 
-export type WebVehicle = Vehicle & { plate?: string };
+export type { Coordinate, Notice, Trip };
+export type WebVehicle = Vehicle & { plate?: string; ownedSince?: number };
 export type WebStatus = VehicleStatus & { location: (Coordinate & { updatedAt?: number }) | null };
 export type CommandResult = { isOk: boolean; message: string; requestId?: string; isConfirmed?: boolean };
 export type Stage = "cloud" | "car";
 export type Session = { signedIn: boolean; account: string | null };
+/** Proton's layered car pictures: file token (e.g. "DOOR_LEFT_FRONT_OPEN") → image URL. */
+export type SceneAngle = { id: "top" | "fortyFive"; pack: string; layers: Record<string, string> };
+export type DataUsage = { usedBytes?: number; remainingBytes?: number };
 
 export class ApiError extends Error {
   constructor(
@@ -20,7 +24,7 @@ export class ApiError extends Error {
 export const signedOutEvent = new EventTarget();
 
 function fail(body: { error?: string; code?: string | number; signedOut?: boolean }, status: number): never {
-  if (body.signedOut) signedOutEvent.dispatchEvent(new Event("signedout"));
+  if (body.signedOut) signedOutEvent.dispatchEvent(new CustomEvent("signedout", { detail: body.error }));
   throw new ApiError(body.error ?? `HTTP ${status}`, body.code, !!body.signedOut);
 }
 
@@ -44,7 +48,13 @@ export const api = {
   vehicles: () => request<WebVehicle[]>("/vehicles"),
   status: (v: string) => request<WebStatus>(`/vehicles/${vin(v)}/status`),
   trips: (v: string) => request<Trip[]>(`/vehicles/${vin(v)}/trips`),
+  /** The route driven, in order; empty when Proton has none. */
+  tripTrack: (v: string, startedAt: number, endedAt: number) =>
+    request<Coordinate[]>(`/vehicles/${vin(v)}/trips/track?start=${startedAt}&end=${endedAt}`),
+  scene: (v: string) => request<{ angles: SceneAngle[] }>(`/vehicles/${vin(v)}/scene`),
+  dataUsage: (v: string) => request<DataUsage | null>(`/vehicles/${vin(v)}/data-usage`),
   notices: () => request<Notice[]>("/notices"),
+  markRead: (id: string) => request<{ ok: true }>(`/notices/${encodeURIComponent(id)}/read`, {}),
 
   /** Resolves with the car's answer; `onStage` reports progress while it waits (up to ~45 s). */
   async command(v: string, command: string, body: { pin?: string; params?: Record<string, string | number> }, onStage: (s: Stage) => void) {

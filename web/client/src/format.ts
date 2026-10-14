@@ -1,6 +1,7 @@
 const number = (n: number, digits = 0) => n.toLocaleString(undefined, { maximumFractionDigits: digits });
 
-export const km = (n?: number) => (n == null ? "—" : `${number(n)} km`);
+// One decimal for short distances (an 11.3 km trip), whole kilometres beyond 100.
+export const km = (n?: number) => (n == null ? "—" : `${number(n, Math.abs(n) < 100 ? 1 : 0)} km`);
 
 export function ago(ms?: number) {
   if (!ms) return "unknown";

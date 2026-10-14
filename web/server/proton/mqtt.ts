@@ -35,28 +35,44 @@ export type ResultWatch = {
   close(): void;
 };
 
+const toPem = (raw: Buffer) => `-----BEGIN CERTIFICATE-----\n${raw.toString("base64").match(/.{1,64}/g)!.join("\n")}\n-----END CERTIFICATE-----\n`;
+
+/**
+ * The broker sends a chain ending in a self-signed CA, so the whole chain is pinned: the CA is
+ * what Node verifies against. Saved as mqtt-<env>-chain.pem (the name changed when this went
+ * from leaf-only to the chain, so an old leaf-only file is ignored).
+ */
 async function brokerCert(env: ProtonEnv, dataDir: string): Promise<string> {
-  const path = `${dataDir}/mqtt-${env}.pem`;
+  const path = `${dataDir}/mqtt-${env}-chain.pem`;
   try {
     return await readFile(path, "utf8");
   } catch {
     // first use
   }
   const { host, port } = BROKERS[env];
-  const pem = await new Promise<string>((resolve, reject) => {
+  const pems = await new Promise<string[]>((resolve, reject) => {
     const socket = tls.connect({ host, port, servername: host, rejectUnauthorized: false }, () => {
-      const raw = socket.getPeerCertificate().raw;
+      const out: string[] = [];
+      let cert: tls.DetailedPeerCertificate | undefined = socket.getPeerCertificate(true);
+      // A self-signed root lists itself as its issuer.
+      while (cert?.raw && !out.includes(toPem(cert.raw))) {
+        out.push(toPem(cert.raw));
+        cert = cert.issuerCertificate;
+      }
       socket.destroy();
-      if (!raw) return reject(new Error("broker sent no certificate"));
-      resolve(`-----BEGIN CERTIFICATE-----\n${raw.toString("base64").match(/.{1,64}/g)!.join("\n")}\n-----END CERTIFICATE-----\n`);
+      if (!out.length) return reject(new Error("broker sent no certificate"));
+      resolve(out);
     });
     socket.setTimeout(8000, () => socket.destroy(new Error("timed out fetching the broker certificate")));
     socket.on("error", reject);
   });
+  const pem = pems.join("");
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, pem);
-  const cert = new X509Certificate(pem);
-  console.log(`[push] Pinned broker certificate ${cert.subject.replace(/\n/g, ", ")} (sha256 ${cert.fingerprint256})`);
+  for (const p of pems) {
+    const cert = new X509Certificate(p);
+    console.log(`[push] Pinned broker certificate ${cert.subject.replace(/\n/g, ", ")} (sha256 ${cert.fingerprint256})`);
+  }
   return pem;
 }
 

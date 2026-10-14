@@ -3,6 +3,7 @@ import { formatNotice } from "../../../src/providers/proton/format.ts";
 import { md5, ProtonError, type ProtonApi } from "./api.ts";
 import { watchControlResults, type ControlResult } from "./mqtt.ts";
 import { bindPushDevice, registerPushDevice } from "./push-device.ts";
+import { loadPack, type SceneAngleId } from "./scene.ts";
 
 /**
  * The parts of src/providers/proton/index.ts the web app uses: vehicles, status, commands,
@@ -17,26 +18,34 @@ type ControlRequest = {
 
 type Params = Record<string, string | number>;
 
-/** Command id → Atlas `serviceKey` (acosdk RvcKtxKt.toRequest) and its capability family. */
-const CONTROLS: Record<string, { family: string; build: (p: Params) => ControlRequest }> = {
-  lock: { family: "RDU", build: () => ({ serviceKey: "RDL-OFF" }) },
-  unlock: { family: "RDU", build: () => ({ serviceKey: "RDU-ON" }) },
-  climate_on: { family: "RCE", build: (p) => ({ serviceKey: "RCE-ON", parameters: [{ key: "rce.temp", stringVal: String(p.temp ?? 22) }] }) },
-  climate_off: { family: "RCE", build: () => ({ serviceKey: "RCE-OFF" }) },
-  horn_lights: { family: "RHL", build: () => ({ serviceKey: "RHL-HornAndLight" }) },
-  lights: { family: "RHL", build: () => ({ serviceKey: "RHL-LIGHT" }) },
-  windows_close: { family: "RWS", build: () => ({ serviceKey: "RWS-OFF" }) },
-  windows_open: { family: "RWS", build: () => ({ serviceKey: "RWS-ON" }) },
-  sunroof_close: { family: "RWS", build: () => ({ serviceKey: "RWS-SunroofOFF" }) },
+/** A capability tree item: `A001X001Y010-RDU` → family "RDU", plus its (English and Chinese) name. */
+type Ability = { family: string; name: string };
+const has = (caps: Ability[], family: string, name?: RegExp) => caps.some((c) => c.family === family && (!name || name.test(c.name)));
+
+/**
+ * Command id → Atlas `serviceKey` (acosdk RvcKtxKt.toRequest) and the capability it needs. A
+ * family alone is too broad: an S70 lists RWS for its windows but has no sunroof control.
+ */
+const CONTROLS: Record<string, { needs: (caps: Ability[]) => boolean; build: (p: Params) => ControlRequest }> = {
+  lock: { needs: (c) => has(c, "RDL") || has(c, "RDU"), build: () => ({ serviceKey: "RDL-OFF" }) },
+  unlock: { needs: (c) => has(c, "RDU"), build: () => ({ serviceKey: "RDU-ON" }) },
+  climate_on: { needs: (c) => has(c, "RCE"), build: (p) => ({ serviceKey: "RCE-ON", parameters: [{ key: "rce.temp", stringVal: String(p.temp ?? 22) }] }) },
+  climate_off: { needs: (c) => has(c, "RCE"), build: () => ({ serviceKey: "RCE-OFF" }) },
+  defrost_on: { needs: (c) => has(c, "RCE", /defrost/i), build: () => ({ serviceKey: "RCE-DefrostON" }) },
+  horn_lights: { needs: (c) => has(c, "RHL"), build: () => ({ serviceKey: "RHL-HornAndLight" }) },
+  lights: { needs: (c) => has(c, "RHL"), build: () => ({ serviceKey: "RHL-LIGHT" }) },
+  windows_close: { needs: (c) => has(c, "RWS", /window (?:close|open)/i), build: () => ({ serviceKey: "RWS-OFF" }) },
+  windows_open: { needs: (c) => has(c, "RWS", /window (?:close|open)/i), build: () => ({ serviceKey: "RWS-ON" }) },
+  ventilate: { needs: (c) => has(c, "RWS", /ventilat/i), build: () => ({ serviceKey: "RWS-BreathableON" }) },
+  sunroof_close: { needs: (c) => has(c, "RWS", /sunroof/i), build: () => ({ serviceKey: "RWS-SunroofOFF" }) },
   // Unlocks the boot latch; it doesn't pop the boot open.
-  trunk_open: { family: "RDU", build: () => ({ serviceKey: "RDU-TargetON" }) },
-  trunk_lock: { family: "RDU", build: () => ({ serviceKey: "RDU-TargetOFF" }) },
+  trunk_open: { needs: (c) => has(c, "RTU") || has(c, "RDU", /trunk/i), build: () => ({ serviceKey: "RDU-TargetON" }) },
+  trunk_lock: { needs: (c) => has(c, "RTU", /trunk lock|lock trunk/i) || has(c, "RDU", /trunk lock|lock trunk/i), build: () => ({ serviceKey: "RDU-TargetOFF" }) },
   // Minutes, as Proton Link's engine dialog sends them.
-  engine_start: { family: "RES", build: (p) => ({ serviceKey: "RES-Engine-ON", duration: Number(p.minutes ?? 10) }) },
-  engine_stop: { family: "RES", build: () => ({ serviceKey: "RES-Engine-OFF" }) },
-  defrost_on: { family: "RCE", build: () => ({ serviceKey: "RCE-DefrostON" }) },
-  charge_start: { family: "RCS", build: () => ({ serviceKey: "RCS-ChargingStart" }) },
-  charge_stop: { family: "RCS", build: () => ({ serviceKey: "RCS-ChargingStop" }) },
+  engine_start: { needs: (c) => has(c, "RES"), build: (p) => ({ serviceKey: "RES-Engine-ON", duration: Number(p.minutes ?? 10) }) },
+  engine_stop: { needs: (c) => has(c, "RES"), build: () => ({ serviceKey: "RES-Engine-OFF" }) },
+  charge_start: { needs: (c) => has(c, "RCS"), build: () => ({ serviceKey: "RCS-ChargingStart" }) },
+  charge_stop: { needs: (c) => has(c, "RCS"), build: () => ({ serviceKey: "RCS-ChargingStop" }) },
 };
 
 // Keyed by EXECUTION_FAIL code.
@@ -45,19 +54,35 @@ const CAR_REFUSALS: Record<string, string> = {
   "2048": "Remote start limit reached. Drive the car once, then try again.",
 };
 
-type CapabilityNode = { itemCode?: string; child?: CapabilityNode[] };
+type CapabilityNode = { itemCode?: string; itemName?: string; child?: CapabilityNode[] };
 
-/** Capability item codes look like `A001X001Y010-RDU`; the suffix is the service family. */
-function families(tree: CapabilityNode[]) {
-  const out = new Set<string>();
+function abilities(tree: CapabilityNode[]) {
+  const out: Ability[] = [];
   const walk = (nodes?: CapabilityNode[]) =>
     nodes?.forEach((n) => {
-      const fam = n.itemCode?.split("-")[1];
-      if (fam) out.add(fam);
+      const family = n.itemCode?.split("-")[1];
+      if (family) out.push({ family, name: n.itemName ?? "" });
       walk(n.child);
     });
   walk(tree);
   return out;
+}
+
+/** "METALLIC QUARTZ BLACK II 2K-A0" → "Metallic Quartz Black II" (drops the paint code). */
+function paintName(raw?: string) {
+  if (!raw) return undefined;
+  return raw
+    .replace(/\s+\S*\d\S*-\S+$/, "")
+    .toLowerCase()
+    .replace(/\b([a-z])/g, (c) => c.toUpperCase())
+    .replace(/\b(Ii|Iii|Iv)\b/g, (r) => r.toUpperCase());
+}
+
+/** "P380-1.5-7DCT2WD-Q-MH0" → "1.5 · 7DCT"; the variant letter isn't decoded. */
+function drivetrain(modelName?: string) {
+  const [, engine, gearbox] = modelName?.split("-") ?? [];
+  const box = gearbox?.match(/^\d*[A-Z]+?(?=\dWD|$)/)?.[0];
+  return [engine && /^\d/.test(engine) ? engine : undefined, box].filter(Boolean).join(" · ") || undefined;
 }
 
 /** Success words win: successes can read like warnings ("Remote engine started. Please use the vehicle in time."). */
@@ -81,8 +106,11 @@ type Msg = {
   businessData?: string;
 };
 
+export type SceneResult = { angles: { id: SceneAngleId; pack: string; layers: Record<string, string> }[] };
+
 export function createClient(api: ProtonApi, dataDir: string) {
   const infoByVin = new Map<string, AtlasVehicleInfo>();
+  const sceneByVin = new Map<string, SceneResult>();
 
   const loadInfos = async () => {
     const list = (await api.atlas<AtlasVehicleInfo[]>("basic/user/vehicle/list")) ?? [];
@@ -120,10 +148,10 @@ export function createClient(api: ProtonApi, dataDir: string) {
 
   const supported = async (vin: string) => {
     try {
-      const fams = families((await api.atlas<CapabilityNode[]>(`basic/ability/vehicle/${encodeURIComponent(vin)}`)) ?? []);
-      if (fams.size === 0) return undefined;
+      const caps = abilities((await api.atlas<CapabilityNode[]>(`basic/ability/vehicle/${encodeURIComponent(vin)}`)) ?? []);
+      if (caps.length === 0) return undefined;
       return Object.entries(CONTROLS)
-        .filter(([, c]) => fams.has(c.family))
+        .filter(([, c]) => c.needs(caps))
         .map(([id]) => id);
     } catch {
       return undefined; // offer everything if the capability tree is unavailable
@@ -197,7 +225,17 @@ export function createClient(api: ProtonApi, dataDir: string) {
       const vehicles = await Promise.all(
         infos.map(async (v) => {
           const [imageUrl, commands, color] = await Promise.all([imageFor(v), supported(v.vin), paintFor(v)]);
-          return { ...mapVehicle(v, imageUrl), commands, color, plate: v.customPlateNo || v.plateNo || undefined };
+          const info = v as AtlasVehicleInfo & { bodyColorName?: string; soldTime?: number };
+          return {
+            ...mapVehicle(v, imageUrl),
+            // Proton Link leaves vehicleName empty unless you rename the car; matName is the model ("S70").
+            name: v.vehicleName?.trim() || [v.brandName && v.brandName !== "acotech" ? v.brandName : "Proton", v.matName].filter(Boolean).join(" "),
+            model: drivetrain(v.modelName) ?? v.modelName,
+            commands,
+            color: paintName(info.bodyColorName) ?? color,
+            plate: v.customPlateNo || v.plateNo || undefined,
+            ownedSince: info.soldTime || undefined,
+          };
         }),
       );
       return vehicles.sort((a, b) => Number(!!b.isDefault) - Number(!!a.isDefault));
@@ -207,6 +245,46 @@ export function createClient(api: ProtonApi, dataDir: string) {
       const s = (await api.atlas<AtlasVehicleStatus>("iot/function/getVehicleStatus", { method: "POST", body: { vin } })) ?? {};
       const at = coord(s.latitude, s.longitude);
       return { ...mapStatus(s), location: at ? { ...at, updatedAt: typeof s.updateTime === "number" ? s.updateTime : undefined } : null };
+    },
+
+    /** The layer pack per camera angle; the layers are served by /api/scene/:pack/:file. */
+    async getScene(vin: string): Promise<SceneResult> {
+      const cached = sceneByVin.get(vin);
+      if (cached) return cached;
+      const info = await infoFor(vin);
+      if (!info.matCode || !info.modelCode || !info.bodyColorCode) return { angles: [] };
+
+      const ids: SceneAngleId[] = ["fortyFive", "top"];
+      const packs = await Promise.all(
+        ids.map((id) =>
+          loadPack(api, info, id, dataDir).catch((e) => {
+            console.log(`[scene] ${id} failed: ${(e as Error).message}`);
+            return null;
+          }),
+        ),
+      );
+      const angles: SceneResult["angles"] = [];
+      packs.forEach((p, i) => {
+        if (!p) return;
+        const layers: Record<string, string> = {};
+        for (const f of p.files) layers[f.replace(/\.[^.]+$/, "").toUpperCase()] = `/api/scene/${p.pack}/${f}`;
+        if (Object.keys(layers).some((k) => k.includes("FRAME"))) angles.push({ id: ids[i], pack: p.pack, layers });
+      });
+      const scene = { angles };
+      // Don't cache a total failure, so the next call retries.
+      if (angles.length) sceneByVin.set(vin, scene);
+      return scene;
+    },
+
+    async getDataUsage(vin: string) {
+      const res = await api.legacy<{ residueFlow?: string; usedFlow?: string }>("app/v1/vehicle/flow", { query: { userId: api.userId, vin } });
+      const bytes = (kb?: string) => {
+        const n = kb === undefined || kb === "" ? NaN : Number(kb);
+        return Number.isFinite(n) ? n * 1024 : undefined;
+      };
+      const usedBytes = bytes(res?.usedFlow);
+      const remainingBytes = bytes(res?.residueFlow);
+      return usedBytes === undefined && remainingBytes === undefined ? null : { usedBytes, remainingBytes };
     },
 
     async sendCommand(vin: string, command: string, opts: { pin?: string; params?: Params; onProgress?: (stage: Stage) => void }): Promise<CommandResult> {
@@ -253,11 +331,23 @@ export function createClient(api: ProtonApi, dataDir: string) {
 
     async getTrips(vin: string, days = 30) {
       const end = Date.now();
-      const list = await api.atlas<AtlasTrip[]>("bigdata/vehicle/trip/queryList/app/v1", {
-        method: "POST",
-        body: { startTime: end - days * 86_400_000, endTime: end, vin, isPage: true, currentPage: 1, pageSize: 50 },
-      });
-      return (list ?? []).map(mapTrip).filter((t) => t !== null);
+      const pageSize = 50;
+      const all: AtlasTrip[] = [];
+      // Proton pages trips 50 at a time, newest first; a short page is the last one.
+      for (let currentPage = 1; currentPage <= 20; currentPage++) {
+        const page =
+          (await api.atlas<AtlasTrip[]>("bigdata/vehicle/trip/queryList/app/v1", {
+            method: "POST",
+            body: { startTime: end - days * 86_400_000, endTime: end, vin, isPage: true, currentPage, pageSize },
+          })) ?? [];
+        all.push(...page);
+        if (page.length < pageSize) break;
+      }
+      // The start time alone, so a trip keeps its id (and its link) as newer trips arrive.
+      return all
+        .map(mapTrip)
+        .filter((t) => t !== null)
+        .map((t) => ({ ...t, id: String(t.startedAt) }));
     },
 
     async getTripTrack(vin: string, startTime: number, endTime: number) {
@@ -266,6 +356,10 @@ export function createClient(api: ProtonApi, dataDir: string) {
         body: { startTime, endTime, currentPage: 0, pageSize: 1000, vin },
       });
       return (points ?? []).map((p) => coord(p.latitude, p.longitude)).filter((c) => !!c);
+    },
+
+    async markNoticeRead(id: string) {
+      await api.atlas("information/mobileLog/markReadByLogId", { method: "POST", body: { logIds: [id] } });
     },
 
     async getNotices() {

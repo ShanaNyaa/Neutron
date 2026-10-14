@@ -127,7 +127,9 @@ async function call<T>(base: string, path: string, opts: RequestOptions): Promis
   if (res.status === 401) throw new ProtonError("Session expired", 401, true);
   if (env && typeof env === "object" && "code" in env) {
     if (Number(env.code) === 200) return env.data as T;
-    if (Number(env.code) === TOKEN_EXPIRED) throw new ProtonError("Session expired", TOKEN_EXPIRED, true);
+    // 40006: the token expired. 401 "Authentication failed.": usually the account signed in on
+    // another device, which ends this session. Both are tried once with the refresh token.
+    if (Number(env.code) === TOKEN_EXPIRED || Number(env.code) === 401) throw new ProtonError("Session expired", env.code, true);
     throw new ProtonError(env.msg || `Proton error ${env.code}`, env.code);
   }
   throw new ProtonError(`HTTP ${res.status}`, res.status);
@@ -219,7 +221,11 @@ export class ProtonApi {
         this.session = { ...this.session, accessToken: res.accessToken };
         await this.onSession(this.session);
       } catch {
-        throw new ProtonError("Your Proton session expired. Sign in again.", "refresh", true);
+        throw new ProtonError(
+          "Your Proton Link session ended, usually because the account signed in on another phone. Sign in again.",
+          "refresh",
+          true,
+        );
       }
     })().finally(() => {
       this.refreshing = null;

@@ -36,3 +36,6 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+# Reference screenshots of the Proton app (personal data)
+Screenshots_Example/
