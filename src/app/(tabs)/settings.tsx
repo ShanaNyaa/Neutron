@@ -142,8 +142,8 @@ export default function Settings() {
             <PanelRow
               icon="logo-github"
               label="GitHub Repository"
-              detail="github.com/ShanaNyaa/neutron"
-              onPress={() => Linking.openURL("https://github.com/ShanaNyaa/neutron")}
+              detail="github.com/ShanaNyaa/Neutron"
+              onPress={() => Linking.openURL("https://github.com/ShanaNyaa/Neutron")}
             />
             <PanelRow
               icon="heart-outline"
