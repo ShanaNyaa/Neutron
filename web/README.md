@@ -6,7 +6,7 @@ The browser can't call Proton directly: Proton's API sends no CORS headers, and 
 arrive over MQTT on a raw TLS socket. So the server signs in to Proton, makes the calls, and
 listens for results.
 
-Everything runs in Podman. Nothing is installed on the host.
+Everything runs in Podman or Docker; `docker compose` takes the same commands as `podman compose` below. Nothing is installed on the host.
 
 ## Running it
 

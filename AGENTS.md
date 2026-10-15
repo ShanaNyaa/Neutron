@@ -44,7 +44,7 @@ Docs: https://docs.expo.dev/eas/index.md
 
 `web/` is the Neutron web app, a separate React (Vite) + Node (Hono) app for Proton cars that shares the mobile app's Proton mappers. The Expo rules above don't apply to it. See `web/README.md`.
 
-- Run everything through Podman, from `web/`. Never install Node packages on the host:
+- Run everything through Podman or Docker (`docker compose` takes the same commands), from `web/`. Never install Node packages on the host:
   - `podman compose up`: dev server on http://localhost:5173
   - `podman compose run --rm dev npm install <package>`: add a package
   - `podman compose run --rm dev npm run typecheck`: typecheck. Run it before declaring a web task done.
@@ -93,4 +93,8 @@ Sign-in, reload keeping the session, a second browser with a non-listed number r
 
 ### Decided
 - The product name is Neutron, for the mobile app and the web app (renamed from Mottokar, the fork's origin, in October 2026; the mobile app got a new identity, `com.shananyaa.neutron`). Credit to Mottokar by Zackry Rosli stays in the README and both Settings screens.
+- Order of work (October 2026): finish the web app and its packaging first, then the Android app, and iOS later. The Apple team ID `PAJK9L7KYM` in `app.json` and the keychain group strings is left over from the fork; replace it with the owner's before any iOS build.
+- The `ios/` and `android/` folders are committed. The rename edited them directly; if they drift from `app.json`, regenerate with `bunx expo prebuild --clean` rather than patching further.
+
+### Not decided yet
 - Whether display settings (theme, units, layout) should sync per person on the server. Today they're per device in localStorage.
