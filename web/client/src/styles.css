@@ -547,6 +547,53 @@ label.field {
   font-size: 1.15rem;
 }
 
+/* The small tile's extras stack under the value as before. */
+.tile-extra {
+  display: contents;
+}
+
+/* A wide tile: heading across the top, then the value on the left with the extras beside it. */
+.tile.wide {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 20px;
+}
+
+.tile.wide .tile-head {
+  grid-column: 1 / -1;
+}
+
+.widgets .tile.wide .tile-value {
+  font-size: 1.6rem;
+}
+
+.tile.wide .tile-extra {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  justify-items: end;
+  text-align: right;
+}
+
+.tile.wide .tile-extra .meter {
+  width: 100%;
+  max-width: 220px;
+}
+
+.tile.wide .tyre-car {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
+/* The location tile's value is an address: let it wrap, but not take over the tile. */
+.tile .tile-value {
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .arranging .slot {
   touch-action: none;
   cursor: grab;
@@ -591,6 +638,22 @@ label.field {
   border-radius: 50%;
   border: 2px solid var(--bg);
   background: var(--error);
+  color: #fff;
+  padding: 0;
+}
+
+.slot-resize {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  background: var(--accent);
   color: #fff;
   padding: 0;
 }
@@ -664,6 +727,27 @@ label.field {
 .custom-move {
   display: flex;
   flex: none;
+  align-items: center;
+  gap: 4px;
+}
+
+.segmented.mini button {
+  padding: 4px 7px;
+  display: grid;
+  place-items: center;
+}
+
+/* On a phone the size and move controls go under the name, so the hint has room. */
+@media (max-width: 560px) {
+  .custom-row {
+    flex-wrap: wrap;
+  }
+
+  .custom-row .custom-move {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: -4px;
+  }
 }
 
 .tile-button {

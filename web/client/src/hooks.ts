@@ -47,6 +47,8 @@ export const useAddress = (c?: { latitude: number; longitude: number } | null) =
     retry: false,
   });
 
+export const useCommandLog = () => useQuery({ queryKey: ["log"], queryFn: api.log, staleTime: 30_000, retry });
+
 export const useNotices = () =>
   useQuery({ queryKey: ["notices"], queryFn: api.notices, refetchInterval: 5 * 60_000, staleTime: 60_000, retry });
 

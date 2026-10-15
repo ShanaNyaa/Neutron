@@ -17,22 +17,24 @@ import {
   Navigation,
   Plug,
   Power,
+  RectangleHorizontal,
   RotateCcw,
   Signal,
+  Square,
   SlidersHorizontal,
   Snowflake,
   Thermometer,
   UserCheck,
   Wrench,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 
 import type { DataUsage, WebStatus, WebVehicle } from "../api.ts";
 import { MapView } from "../components/MapView.tsx";
 import { useArrange } from "../components/useArrange.ts";
 import { km, number, temp } from "../format.ts";
 import { navigate, useAddress, useDataUsage, useStatus } from "../hooks.ts";
-import { pressure, setPref, TYRE_UNITS, unitLabel, usePrefs } from "../prefs.ts";
+import { pressure, setPref, TYRE_UNITS, unitLabel, usePrefs, type WidgetSize } from "../prefs.ts";
 
 export const PLACES: Record<string, string> = {
   frontLeft: "front left",
@@ -62,19 +64,25 @@ type Status = WebStatus & { experimental?: Experimental };
 type Ctx = { s: Status; vehicle: WebVehicle; usage?: DataUsage | null };
 
 /**
- * Everything the Car condition screen can show. `wide` widgets take a full row; the rest are
- * tiles, two to a row on a phone. `available` hides a widget when the car doesn't report it.
+ * Everything the Car condition screen can show. Each widget can be small (one slot, two to a
+ * row on a phone) or wide (a whole row); people pick per widget in Customise. A plain tile
+ * lays itself out for either size (see Tile); widgets with more to show render differently
+ * per size. `available` hides a widget when the car doesn't report it.
  */
 type Widget = {
   id: string;
   name: string;
   hint: string;
   icon: LucideIcon;
-  wide?: boolean;
+  /** Small unless said otherwise. */
+  defaultSize?: WidgetSize;
   experimental?: boolean;
   available?: (c: Ctx) => boolean;
-  render: (c: Ctx) => ReactNode;
+  render: (c: Ctx, size: WidgetSize) => ReactNode;
 };
+
+/** The size of the slot a tile is in, so tiles needn't be told one by one. */
+const SizeContext = createContext<WidgetSize>("small");
 
 const WIDGETS: Widget[] = [
   { id: "fuel", name: "Fuel", hint: "Litres left and range", icon: Fuel, render: ({ s, vehicle }) => <FuelTile s={s} tank={vehicle.fuelTankLitres} /> },
@@ -157,9 +165,31 @@ const WIDGETS: Widget[] = [
       </Tile>
     ),
   },
-  { id: "diagnostics", name: "System diagnostics", hint: "Every system in one list with status dots", icon: ListChecks, wide: true, render: ({ s }) => <Diagnostics s={s} /> },
-  { id: "data", name: "Car's mobile data", hint: "The car's data plan, used and left", icon: Signal, wide: true, available: ({ usage }) => !!usage, render: ({ usage }) => <DataCard usage={usage!} /> },
-  { id: "location", name: "Parked here", hint: "Address, map, and directions", icon: MapPin, wide: true, available: ({ s }) => !!s.location, render: ({ s, vehicle }) => <LocationCard location={s.location!} name={vehicle.name} /> },
+  {
+    id: "diagnostics",
+    name: "System diagnostics",
+    hint: "Every system in one list with status dots; small shows just what needs a look",
+    icon: ListChecks,
+    defaultSize: "wide",
+    render: ({ s }, size) => (size === "wide" ? <Diagnostics s={s} /> : <DiagnosticsTile s={s} />),
+  },
+  {
+    id: "data",
+    name: "Car's mobile data",
+    hint: "The car's data plan, used and left",
+    icon: Signal,
+    available: ({ usage }) => !!usage,
+    render: ({ usage }, size) => (size === "wide" ? <DataCard usage={usage!} /> : <DataTile usage={usage!} />),
+  },
+  {
+    id: "location",
+    name: "Parked here",
+    hint: "Address and directions; wide adds the map",
+    icon: MapPin,
+    defaultSize: "wide",
+    available: ({ s }) => !!s.location,
+    render: ({ s, vehicle }, size) => (size === "wide" ? <LocationCard location={s.location!} name={vehicle.name} /> : <LocationTile location={s.location!} />),
+  },
   // Undecoded readings, shown raw (docs/proton-integration.md).
   {
     id: "seatbelts",
@@ -221,6 +251,11 @@ const WIDGETS: Widget[] = [
 /** Fits about one phone screen: the readings people check most, then where the car is. */
 export const DEFAULT_WIDGETS = ["fuel", "doors", "tyres", "battery", "engine", "climate", "odometer", "service", "location"];
 
+const SIZES: { value: WidgetSize; label: string; icon: LucideIcon }[] = [
+  { value: "small", label: "Small", icon: Square },
+  { value: "wide", label: "Wide", icon: RectangleHorizontal },
+];
+
 const raw = (v: unknown) => (v == null || v === "" ? "—" : String(v));
 const byId = new Map(WIDGETS.map((w) => [w.id, w]));
 
@@ -232,6 +267,13 @@ function useLayout() {
 
 const saveLayout = (ids: string[]) => setPref("conditionWidgets", ids);
 
+function useSizes() {
+  const { conditionSizes } = usePrefs();
+  return (w: Widget): WidgetSize => conditionSizes?.[w.id] ?? w.defaultSize ?? "small";
+}
+
+const setSize = (id: string, size: WidgetSize, sizes: Record<string, WidgetSize> | null) => setPref("conditionSizes", { ...sizes, [id]: size });
+
 /**
  * Everything the car reports, beyond what the home screen shows. Its own screen on phones.
  * Press and hold any widget to arrange them; Customise lists every widget with switches.
@@ -240,6 +282,8 @@ export function ConditionPanel({ vehicle, title }: { vehicle: WebVehicle; title?
   const { data: s, error } = useStatus(vehicle.vin);
   const usage = useDataUsage(vehicle.vin);
   const layout = useLayout();
+  const sizeOf = useSizes();
+  const { conditionSizes } = usePrefs();
   const [editing, setEditing] = useState(false);
   const arrange = useArrange(layout, saveLayout);
 
@@ -282,28 +326,39 @@ export function ConditionPanel({ vehicle, title }: { vehicle: WebVehicle; title?
     <div className={`stack condition ${arrange.arranging ? "arranging" : ""}`}>
       {head}
       {arrange.arranging ? (
-        <p className="muted small arrange-hint">Drag widgets to reorder. Tap − to remove one.</p>
+        <p className="muted small arrange-hint">Drag widgets to reorder. Tap − to remove one, or ⤢ to make it wide or small.</p>
       ) : (
         shown.length > 1 && <p className="muted tiny arrange-hint">Tip: press and hold a widget to rearrange.</p>
       )}
       {!shown.length && <div className="card empty">Nothing to show. Use Customise to pick what this screen shows.</div>}
       <section className="widgets" aria-label="Car status">
-        {shown.map((w) => (
-          <div
-            key={w.id}
-            ref={arrange.slotRef(w.id)}
-            className={`slot ${w.wide ? "wide" : ""} ${arrange.dragId === w.id ? "dragging" : ""}`}
-            onPointerDown={arrange.onPointerDown(w.id)}
-            onContextMenu={(e) => e.preventDefault()}
-          >
-            <div className="slot-inner">{w.render(ctx)}</div>
-            {arrange.arranging && (
-              <button className="slot-remove" onClick={() => saveLayout(layout.filter((id) => id !== w.id))} aria-label={`Remove ${w.name}`}>
-                <Minus size={14} />
-              </button>
-            )}
-          </div>
-        ))}
+        {shown.map((w) => {
+          const size = sizeOf(w);
+          const other: WidgetSize = size === "wide" ? "small" : "wide";
+          return (
+            <div
+              key={w.id}
+              ref={arrange.slotRef(w.id)}
+              className={`slot ${size} ${arrange.dragId === w.id ? "dragging" : ""}`}
+              onPointerDown={arrange.onPointerDown(w.id)}
+              onContextMenu={(e) => e.preventDefault()}
+            >
+              <SizeContext.Provider value={size}>
+                <div className="slot-inner">{w.render(ctx, size)}</div>
+              </SizeContext.Provider>
+              {arrange.arranging && (
+                <>
+                  <button className="slot-remove" onClick={() => saveLayout(layout.filter((id) => id !== w.id))} aria-label={`Remove ${w.name}`}>
+                    <Minus size={14} />
+                  </button>
+                  <button className="slot-resize" onClick={() => setSize(w.id, other, conditionSizes)} aria-label={`Make ${w.name} ${other}`}>
+                    {other === "wide" ? <RectangleHorizontal size={14} /> : <Square size={14} />}
+                  </button>
+                </>
+              )}
+            </div>
+          );
+        })}
       </section>
     </div>
   );
@@ -312,6 +367,8 @@ export function ConditionPanel({ vehicle, title }: { vehicle: WebVehicle; title?
 /** Pick and order widgets. Changes apply as you make them; Done just closes the editor. */
 function Customise({ ctx, layout, onDone }: { ctx: Ctx; layout: string[]; onDone: () => void }) {
   const save = (ids: string[]) => setPref("conditionWidgets", ids);
+  const sizeOf = useSizes();
+  const { conditionSizes } = usePrefs();
   const hidden = WIDGETS.filter((w) => !layout.includes(w.id));
   const move = (i: number, by: number) => {
     const next = [...layout];
@@ -337,6 +394,13 @@ function Customise({ ctx, layout, onDone }: { ctx: Ctx; layout: string[]; onDone
         </label>
         {on && (
           <span className="custom-move">
+            <span className="segmented mini" role="radiogroup" aria-label={`${w.name} size`}>
+              {SIZES.map(({ value, label, icon: SizeIcon }) => (
+                <button key={value} type="button" role="radio" aria-checked={sizeOf(w) === value} className={sizeOf(w) === value ? "active" : ""} onClick={() => setSize(w.id, value, conditionSizes)} aria-label={`${label} ${w.name}`} title={label}>
+                  <SizeIcon size={16} />
+                </button>
+              ))}
+            </span>
             <button className="btn ghost icon" disabled={i === 0} onClick={() => move(i, -1)} aria-label={`Move ${w.name} up`}><ArrowUp size={18} /></button>
             <button className="btn ghost icon" disabled={i === layout.length - 1} onClick={() => move(i, 1)} aria-label={`Move ${w.name} down`}><ArrowDown size={18} /></button>
           </span>
@@ -348,7 +412,7 @@ function Customise({ ctx, layout, onDone }: { ctx: Ctx; layout: string[]; onDone
     <section className="card stack" style={{ gap: 12 }}>
       <div>
         <h3 className="card-title" style={{ marginBottom: 4 }}>Customise Car condition</h3>
-        <p className="muted small">Turn widgets on or off and move them up or down. Small widgets sit two to a row. You can also press and hold a widget on the Car condition screen to drag it.</p>
+        <p className="muted small">Turn widgets on or off, move them up or down, and pick a size: small widgets sit two to a row, wide ones take the row and show more. You can also press and hold a widget on the Car condition screen to drag it.</p>
       </div>
       <div className="section-label" style={{ margin: 0 }}>Showing ({layout.length})</div>
       <ul className="list">{layout.map((id, i) => row(byId.get(id)!, true, i))}</ul>
@@ -359,7 +423,7 @@ function Customise({ ctx, layout, onDone }: { ctx: Ctx; layout: string[]; onDone
         </>
       )}
       <div className="row" style={{ justifyContent: "space-between" }}>
-        <button className="btn ghost small" onClick={() => setPref("conditionWidgets", null)}>
+        <button className="btn ghost small" onClick={() => { setPref("conditionWidgets", null); setPref("conditionSizes", null); }}>
           <RotateCcw size={16} /> Reset to default
         </button>
         <button className="btn primary" onClick={onDone}>Done</button>
@@ -389,6 +453,18 @@ const size = (bytes?: number) => {
   return gb >= 1 ? `${number(gb, 2)} GB` : `${number(bytes / 1024 ** 2)} MB`;
 };
 
+/** The small form: what's left, with the bar. */
+function DataTile({ usage }: { usage: DataUsage }) {
+  const total = (usage.usedBytes ?? 0) + (usage.remainingBytes ?? 0);
+  const pct = total ? ((usage.usedBytes ?? 0) / total) * 100 : undefined;
+  return (
+    <Tile icon={Signal} title="Mobile data" value={usage.remainingBytes != null ? `${size(usage.remainingBytes)} left` : size(usage.usedBytes)}>
+      {pct != null && <div className={`meter ${pct > 85 ? "low" : ""}`}><div style={{ width: `${pct}%` }} /></div>}
+      <span className="muted small">{usage.remainingBytes != null ? `${size(usage.usedBytes)} used` : "used"}</span>
+    </Tile>
+  );
+}
+
 function DataCard({ usage }: { usage: DataUsage }) {
   const total = (usage.usedBytes ?? 0) + (usage.remainingBytes ?? 0);
   const pct = total ? ((usage.usedBytes ?? 0) / total) * 100 : undefined;
@@ -406,8 +482,7 @@ function DataCard({ usage }: { usage: DataUsage }) {
 
 type Level = "ok" | "warn" | "error" | "none";
 
-/** One row per system with a status dot, for a quick scan of everything the car reports. */
-function Diagnostics({ s }: { s: Status }) {
+function diagnosticRows(s: Status) {
   const windowsOpen = Object.values(s.windows ?? {}).filter((v) => v === "open").length;
   const open = (v?: string) => (v === "open" ? "Open" : v === "closed" ? "Closed" : "—");
   const rows: { label: string; value: string; level: Level }[] = [
@@ -422,6 +497,22 @@ function Diagnostics({ s }: { s: Status }) {
     { label: "Odometer", value: km(s.odometerKm), level: "none" },
     { label: "Distance to service", value: s.serviceDueKm != null ? km(s.serviceDueKm) : "—", level: (s.serviceDueKm ?? 0) < 0 ? "warn" : "none" },
   ];
+  return rows;
+}
+
+/** The small form: how many systems need a look, and which. */
+function DiagnosticsTile({ s }: { s: Status }) {
+  const flagged = diagnosticRows(s).filter((r) => r.level === "warn" || r.level === "error");
+  return (
+    <Tile icon={ListChecks} title="Diagnostics" value={flagged.length ? `${flagged.length} to check` : "All OK"} tone={flagged.some((r) => r.level === "error") ? "warn" : flagged.length ? undefined : "ok"}>
+      <span className={`small ${flagged.length ? "warn" : "muted"}`}>{flagged.length ? flagged.map((r) => r.label).join(", ") : "Nothing needs a look"}</span>
+    </Tile>
+  );
+}
+
+/** One row per system with a status dot, for a quick scan of everything the car reports. */
+function Diagnostics({ s }: { s: Status }) {
+  const rows = diagnosticRows(s);
   return (
     <section className="card" style={{ padding: "6px 16px" }} aria-label="System diagnostics">
       <h3 className="section-label" style={{ margin: "10px 0 4px" }}>System diagnostics</h3>
@@ -477,7 +568,7 @@ function TyreTile({ tyres, warnings }: { tyres: WebStatus["tyres"]; warnings: We
     <span className={`tyre-value ${pos.endsWith("Left") ? "left" : "right"} ${warnings?.[pos] ? "warn" : ""}`}>{pressure(tyres?.[pos], tyreUnit)}</span>
   );
   return (
-    <button className="card tile tile-button" onClick={() => setPref("tyreUnit", next.value)} title={`Show in ${next.label}`} aria-label={`Tyre pressure in ${unitLabel(tyreUnit)}: front left ${pressure(tyres?.frontLeft, tyreUnit)}, front right ${pressure(tyres?.frontRight, tyreUnit)}, rear left ${pressure(tyres?.rearLeft, tyreUnit)}, rear right ${pressure(tyres?.rearRight, tyreUnit)}. Show in ${next.label}`}>
+    <button className={`card tile tile-button ${useContext(SizeContext)}`} onClick={() => setPref("tyreUnit", next.value)} title={`Show in ${next.label}`} aria-label={`Tyre pressure in ${unitLabel(tyreUnit)}: front left ${pressure(tyres?.frontLeft, tyreUnit)}, front right ${pressure(tyres?.frontRight, tyreUnit)}, rear left ${pressure(tyres?.rearLeft, tyreUnit)}, rear right ${pressure(tyres?.rearRight, tyreUnit)}. Show in ${next.label}`}>
       <span className="tile-head"><CircleGauge size={16} /> Tyres {warn && <span className="warn small">Check</span>}<span className="unit-chip">{unitLabel(tyreUnit)}</span></span>
       <span className="tyre-car" aria-hidden>
         {cell("frontLeft")}
@@ -506,16 +597,31 @@ function TopDownCar({ warnings }: { warnings: WebStatus["tyreWarnings"] }) {
   );
 }
 
+/** A reading with a heading and extras. In a wide slot the extras sit beside a bigger value. */
 function Tile({ icon: Icon, title, value, tone, experimental, children }: { icon: LucideIcon; title: string; value: string; tone?: "ok" | "warn"; experimental?: boolean; children?: ReactNode }) {
+  const size = useContext(SizeContext);
   return (
-    <div className="card tile">
+    <div className={`card tile ${size}`}>
       <span className="tile-head">
         <Icon size={16} /> {title}
         {experimental && <span className="chip-mini" title="Not decoded yet: raw value">Raw</span>}
       </span>
       <span className={`tile-value ${tone ?? ""}`}>{value}</span>
-      {children}
+      {children != null && <span className="tile-extra">{children}</span>}
     </div>
+  );
+}
+
+/** The small form: the address, and a link to open it. */
+function LocationTile({ location }: { location: NonNullable<WebStatus["location"]> }) {
+  const q = `${location.latitude},${location.longitude}`;
+  const address = useAddress(location);
+  return (
+    <Tile icon={MapPin} title="Parked here" value={address.data ?? (address.isLoading ? "Finding…" : `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`)}>
+      <a className="small" href={`https://www.google.com/maps/dir/?api=1&destination=${q}`} target="_blank" rel="noreferrer">
+        Directions
+      </a>
+    </Tile>
   );
 }
 

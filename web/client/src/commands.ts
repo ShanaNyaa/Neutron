@@ -55,7 +55,8 @@ export const COMMANDS: CommandDef[] = [
     icon: Snowflake,
     group: "climate",
     params: [
-      { key: "temp", label: "Temperature", default: 22, unit: "°C", options: [17, 18, 19, 20, 21, 22, 23, 24, 26, 28].map((t) => ({ label: `${t}°`, value: t })) },
+      // Proton Link's picker: LO, 18–31, HI. LO and HI are left out until we know how the app encodes them.
+      { key: "temp", label: "Temperature", default: 22, unit: "°C", options: Array.from({ length: 14 }, (_, i) => 18 + i).map((t) => ({ label: `${t}°`, value: t })) },
       // Minutes, like engine start: tested on an S70, where 3 ran the climate for three minutes.
       RUN_TIME,
     ],

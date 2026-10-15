@@ -9,6 +9,8 @@ export type Session = { signedIn: boolean; account: string | null };
 /** Proton's layered car pictures: file token (e.g. "DOOR_LEFT_FRONT_OPEN") → image URL. */
 export type SceneAngle = { id: "top" | "fortyFive"; pack: string; layers: Record<string, string> };
 export type DataUsage = { usedBytes?: number; remainingBytes?: number };
+/** One line of the person's command log, newest first. */
+export type CommandLogEntry = { time: number; vin: string; command: string; result: string };
 
 export class ApiError extends Error {
   constructor(
@@ -45,6 +47,9 @@ export const api = {
   session: () => request<Session>("/session"),
   login: (mobilePhone: string, password: string) => request<Session>("/login", { mobilePhone, password }),
   logout: () => request<Session>("/logout", {}),
+  /** Removes this person's Proton session, cookies and command log from the server. */
+  deleteMyData: () => request<Session>("/delete-my-data", {}),
+  log: () => request<CommandLogEntry[]>("/log"),
   vehicles: () => request<WebVehicle[]>("/vehicles"),
   status: (v: string) => request<WebStatus>(`/vehicles/${vin(v)}/status`),
   trips: (v: string) => request<Trip[]>(`/vehicles/${vin(v)}/trips`),

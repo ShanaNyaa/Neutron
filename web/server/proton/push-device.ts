@@ -36,12 +36,13 @@ function deviceInfo(installId: string) {
   };
 }
 
-// Proton answers rapid repeats with "trigger frequency control".
+// Proton answers rapid repeats with "trigger frequency control". Tracked per account, so one
+// person's failure doesn't hold another's registration back.
 const RETRY_AFTER_MS = 10 * 60_000;
-let lastFailure = 0;
+const lastFailure = new Map<string, number>();
 
 export async function registerPushDevice(api: ProtonApi): Promise<string | null> {
-  if (Date.now() - lastFailure < RETRY_AFTER_MS) return null;
+  if (Date.now() - (lastFailure.get(api.userId) ?? 0) < RETRY_AFTER_MS) return null;
   try {
     const res = await api.atlas<Record<string, string> | null>("information/mobileSync/generateDeviceId", {
       headers: { "X-UPLOAD-ID": encryptUpload(api.env, JSON.stringify(deviceInfo(api.deviceId))), "X-AGENT-TYPE": "Android" },
@@ -53,7 +54,7 @@ export async function registerPushDevice(api: ProtonApi): Promise<string | null>
     await bindPushDevice(api, deviceId);
     return deviceId;
   } catch (e) {
-    lastFailure = Date.now();
+    lastFailure.set(api.userId, Date.now());
     console.warn(`[push] Push device registration failed: ${(e as Error).message}`);
     return null;
   }

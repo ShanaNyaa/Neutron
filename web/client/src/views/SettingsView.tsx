@@ -1,10 +1,11 @@
-import { Download, LogOut, Monitor, Smartphone, TabletSmartphone, type LucideIcon } from "lucide-react";
+import { Download, LogOut, Monitor, Smartphone, TabletSmartphone, Trash2, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import type { WebVehicle } from "../api.ts";
 import { COMMANDS } from "../commands.ts";
 import { Picker } from "../components/Picker.tsx";
 import { AppearanceSettings } from "../components/ThemePicker.tsx";
+import { useCommandLog } from "../hooks.ts";
 import { PICKER_STYLES, setPref, TYRE_UNITS, usePrefs } from "../prefs.ts";
 
 type InstallPrompt = Event & { prompt: () => Promise<void> };
@@ -16,7 +17,17 @@ const INSTALL_STEPS: { icon: LucideIcon; platform: string; browser: string; step
   { icon: Monitor, platform: "Desktop", browser: "Chrome, Edge or Helium", steps: "Click the install icon at the right of the address bar." },
 ];
 
-export function SettingsView({ account, vehicles, onSignOut }: { account: string | null; vehicles: WebVehicle[]; onSignOut: () => void }) {
+export function SettingsView({
+  account,
+  vehicles,
+  onSignOut,
+  onDeleteData,
+}: {
+  account: string | null;
+  vehicles: WebVehicle[];
+  onSignOut: () => void;
+  onDeleteData: () => Promise<void>;
+}) {
   // Chrome, Edge and Android offer installing the app; Safari doesn't fire this.
   const [install, setInstall] = useState<InstallPrompt | null>(null);
   const installed = typeof window !== "undefined" && window.matchMedia("(display-mode: standalone)").matches;
@@ -41,16 +52,9 @@ export function SettingsView({ account, vehicles, onSignOut }: { account: string
 
       <PickerCard />
 
-      <section className="card">
-        <h3 className="card-title">Proton Link account</h3>
-        <p>{account ?? "Signed in"}</p>
-        <p className="muted small" style={{ marginTop: 4 }}>
-          Your session is kept on the Neutron server, not in this browser. Signing out removes it.
-        </p>
-        <button className="btn danger" style={{ marginTop: 12 }} onClick={onSignOut}>
-          <LogOut size={18} /> Sign out
-        </button>
-      </section>
+      <AccountCard account={account} vehicles={vehicles} onSignOut={onSignOut} onDeleteData={onDeleteData} />
+
+      <CommandLogCard vehicles={vehicles} />
 
       <section className="card">
         <h3 className="card-title">Cars</h3>
@@ -102,6 +106,104 @@ export function SettingsView({ account, vehicles, onSignOut }: { account: string
         It's built on <a href="https://github.com/zekr89/mottokar" target="_blank" rel="noreferrer">Mottokar</a> by Zackry Rosli and is licensed under GPL-3.0.
       </p>
     </div>
+  );
+}
+
+function AccountCard({
+  account,
+  vehicles,
+  onSignOut,
+  onDeleteData,
+}: {
+  account: string | null;
+  vehicles: WebVehicle[];
+  onSignOut: () => void;
+  onDeleteData: () => Promise<void>;
+}) {
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+  return (
+    <section className="card">
+      <h3 className="card-title">Proton Link account</h3>
+      <p>{account ?? "Signed in"}</p>
+      <p className="muted small" style={{ marginTop: 4 }}>
+        Your Proton session is kept on the Neutron server, not in this browser, and only you can use it. Signing out ends it
+        on this device; signing out of the last device removes it from the server.
+      </p>
+      <div className="row" style={{ marginTop: 12, gap: 8, flexWrap: "wrap" }}>
+        <button className="btn" onClick={onSignOut}>
+          <LogOut size={18} /> Sign out
+        </button>
+        {!confirming && (
+          <button className="btn danger" onClick={() => setConfirming(true)}>
+            <Trash2 size={18} /> Delete my data
+          </button>
+        )}
+      </div>
+      {confirming && (
+        <div className="banner warn small" role="alertdialog" style={{ marginTop: 12 }}>
+          <p>
+            This removes your Proton session, your sign-ins on every device and your command log from the server. Nothing changes on
+            Proton's side{vehicles.length ? " or on your car" : ""}. You can sign in again at any time.
+          </p>
+          <div className="row" style={{ marginTop: 8, gap: 8 }}>
+            <button
+              className="btn danger"
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                try {
+                  await onDeleteData();
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            >
+              {busy ? "Deleting…" : "Delete everything"}
+            </button>
+            <button className="btn" disabled={busy} onClick={() => setConfirming(false)}>
+              Keep it
+            </button>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/** What this person has sent to their car through this server, newest first. */
+function CommandLogCard({ vehicles }: { vehicles: WebVehicle[] }) {
+  const log = useCommandLog();
+  const nameOf = (vin: string) => vehicles.find((v) => v.vin === vin)?.name ?? vin;
+  const labelOf = (id: string) => COMMANDS.find((c) => c.id === id)?.label ?? id;
+  return (
+    <section className="card">
+      <h3 className="card-title">Command log</h3>
+      <p className="muted small" style={{ marginBottom: 8 }}>
+        Commands you've sent through Neutron. The server keeps this log with your account; nobody else can see it.
+      </p>
+      {log.isLoading && <div className="skeleton" style={{ minHeight: 48 }} />}
+      {log.error && <p className="error small">{(log.error as Error).message}</p>}
+      {log.data?.length === 0 && <p className="muted small">No commands sent yet.</p>}
+      {!!log.data?.length && (
+        <ul className="list">
+          {log.data.slice(0, 50).map((e, i) => (
+            <li key={`${e.time}-${i}`} className="list-row" style={{ padding: "8px 0" }}>
+              <span className="list-body">
+                <strong>
+                  {labelOf(e.command)}
+                  {vehicles.length > 1 ? <span className="muted small" style={{ fontWeight: 400 }}> · {nameOf(e.vin)}</span> : null}
+                </strong>
+                <span className={`small ${e.result === "ok" ? "muted" : "error"}`}>
+                  {new Date(e.time).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
+                  {e.result === "ok" ? "" : ` · ${e.result}`}
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
 

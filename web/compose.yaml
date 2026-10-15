@@ -7,6 +7,10 @@ x-env: &env
   DATA_DIR: /data
   # Host names allowed in the browser's address bar. Add your LAN name or IP to use it from your phone.
   ALLOWED_HOSTS: localhost,127.0.0.1
+  # Proton numbers that may sign in, comma-separated, any format. Empty: only the first person to sign in.
+  ALLOWED_PHONES: ""
+  # Encrypts everyone's Proton tokens in the data volume. Required for prod: openssl rand -base64 32
+  SESSION_SECRET: ${SESSION_SECRET:-}
 
 services:
   dev:
@@ -35,8 +39,13 @@ services:
     volumes:
       - data:/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/api/health').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
 volumes:
   node_modules:
-  # Your Proton session tokens and the pinned MQTT certificate.
+  # Everyone's encrypted Proton session tokens, command logs, and the pinned MQTT certificate.
   data:

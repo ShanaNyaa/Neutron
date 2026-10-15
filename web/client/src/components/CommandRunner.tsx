@@ -1,7 +1,9 @@
 import { CircleAlert, CircleCheck, LoaderCircle, X } from "lucide-react";
 import { createContext, useCallback, useContext, useState, type FormEvent, type ReactNode } from "react";
 
-import { api, ApiError, type CommandResult, type Stage, type WebVehicle } from "../api.ts";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { api, ApiError, type CommandResult, type Stage, type WebStatus, type WebVehicle } from "../api.ts";
 import { type CommandDef } from "../commands.ts";
 import { useRefreshAfterCommand, useStored } from "../hooks.ts";
 import { usePrefs } from "../prefs.ts";
@@ -32,6 +34,7 @@ export function CommandProvider({ children }: { children: ReactNode }) {
   // Memory only: asked for again after a reload.
   const [pin, setPin] = useState("");
   const [engineRun, setEngineRun] = useStored<EngineRun>("neutron.engineRun", null);
+  const queries = useQueryClient();
   const refresh = useRefreshAfterCommand();
 
   const send = useCallback(
@@ -79,6 +82,8 @@ export function CommandProvider({ children }: { children: ReactNode }) {
       {picked && (
         <ConfirmSheet
           def={picked.def}
+          // Open the temperature wheel on what the car was last set to, as Proton Link does.
+          initial={{ temp: queries.getQueryData<WebStatus>(["status", picked.vehicle.vin])?.climate?.targetTempC }}
           needsPin={!!picked.vehicle.isPinRequired && !pin}
           onCancel={() => setPicked(null)}
           onSend={(params, p) => void send(picked.vehicle, picked.def, params, p)}
@@ -89,13 +94,22 @@ export function CommandProvider({ children }: { children: ReactNode }) {
   );
 }
 
-function ConfirmSheet({ def, needsPin, onCancel, onSend }: {
+function ConfirmSheet({ def, needsPin, initial, onCancel, onSend }: {
   def: CommandDef;
   needsPin: boolean;
+  /** Preferred starting values; used when the param offers that value. */
+  initial?: Record<string, number | undefined>;
   onCancel: () => void;
   onSend: (params: Record<string, number> | undefined, pin?: string) => void;
 }) {
-  const [values, setValues] = useState<Record<string, number>>(() => Object.fromEntries((def.params ?? []).map((p) => [p.key, p.default])));
+  const [values, setValues] = useState<Record<string, number>>(() =>
+    Object.fromEntries(
+      (def.params ?? []).map((p) => {
+        const wanted = initial?.[p.key];
+        return [p.key, wanted != null && p.options.some((o) => o.value === wanted) ? wanted : p.default];
+      }),
+    ),
+  );
   const [pin, setPin] = useState("");
   const { pickerStyle } = usePrefs();
   const Icon = def.icon;

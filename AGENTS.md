@@ -54,31 +54,30 @@ Docs: https://docs.expo.dev/eas/index.md
 - `web/` is excluded from the root `tsconfig.json` and ESLint config; it has its own `web/tsconfig.json`.
 - Keep the server ports bound to `127.0.0.1` and keep the JSON-only and `ALLOWED_HOSTS` checks in `web/server/index.ts`: the app can unlock the car.
 - Commands act on a real car. Test the UI with fake responses (Playwright `page.route` on `/api/vehicles/*/commands/*` or `/status`), not by sending commands, unless the user asks for a real one.
-- Car condition widgets are listed in `WIDGETS` in `web/client/src/views/ConditionView.tsx`; add a reading there and, if it should show by default, to `DEFAULT_WIDGETS`. Layout, units, picker style and theme live in `web/client/src/prefs.ts` and `theme.ts` (per device, localStorage).
+- Car condition widgets are listed in `WIDGETS` in `web/client/src/views/ConditionView.tsx`; add a reading there and, if it should show by default, to `DEFAULT_WIDGETS`. Every widget can be small (one slot) or wide (a row), chosen per widget in Customise or with the ⤢ button while arranging; `render` gets the size, and a plain `Tile` lays itself out for either. Layout, sizes, units, picker style and theme live in `web/client/src/prefs.ts` and `theme.ts` (per device, localStorage).
 - Status fields Proton sends but nobody has decoded are passed through raw under `experimental` in `web/server/proton/client.ts` and listed in `docs/proton-integration.md`. Decode them there before giving them proper labels.
 
-## Planned next: Neutron for several people on one server
+## Neutron for several people on one server
 
-Agreed with the owner (October 2026), not started yet. Goal: friends (fewer than 5 for now) open the same Neutron server and each signs in with **their own** Proton Link account and controls **only their own** car, without affecting anyone else. Build it in this order and check each step in a browser before moving on.
+Built October 2026 (agreed with the owner). Friends (fewer than 5 for now) open the same Neutron
+server, each signs in with **their own** Proton Link account and controls **only their own** car.
 
 ### How it works
 - **Proton login is the Neutron login.** No separate accounts. Signing in with a Proton number and password creates or reuses that person's server-side session, keyed by Proton `userId`.
-- **Browser ↔ person:** on sign-in the server issues a random session token in a cookie (`HttpOnly`, `Secure` outside localhost, `SameSite=Lax`, about 30 days). Every `/api/*` request finds the person from that cookie and uses **only** their Proton session and client. Nothing may fall back to "the" session.
-- **Several devices per person:** a second sign-in for the same `userId` replaces that person's stored Proton tokens (Proton allows one session per account) and keeps their other cookies valid, so their other devices keep working.
-- **Who may use the server:** `ALLOWED_PHONES` (comma-separated, any format; compare after `normalizeMsisdn`). Any other number is refused **before** contacting Proton. Add a short delay or lockout after repeated failed sign-ins. Empty means only the first person to sign in (the owner) may use it, so a fresh server is never open to everyone.
-- **Tokens at rest:** encrypt each stored Proton session with AES-256-GCM using `SESSION_SECRET` (required in production; refuse to start without it). Proton passwords are never stored; they only pass through to Proton's login.
-- **Command log:** append `{time, userId, vin, command, result}` to a per-person log, shown to that person in Settings.
-- **Delete my data:** a Settings button that removes the person's session, cookies, log and caches from the server.
+- **Browser ↔ person:** on sign-in the server issues a random session token in a cookie (`neutron_session`: `HttpOnly`, `Secure` when the page came over HTTPS, `SameSite=Lax`, 30 days). Every `/api/*` request finds the person from that cookie (`resolveUser` in `web/server/index.ts`) and uses **only** their Proton session and `ProtonClient`, kept in a `Map` by `userId`. Nothing falls back to "the" session.
+- **Several devices per person:** a second sign-in for the same `userId` replaces that person's stored Proton tokens (Proton allows one session per account) and keeps their other cookies valid. Sign out drops one cookie; the last sign-out also removes the Proton tokens.
+- **Who may use the server:** `ALLOWED_PHONES` (comma-separated, any format; compared after `normalizeMsisdn`). Any other number is refused **before** contacting Proton. Five failures per number or address lock sign-in for 15 minutes, and each failure waits a second. Empty means only the first person to sign in (the owner) and people already on the server, so a fresh server is never open to everyone.
+- **Tokens at rest:** `web/server/users.ts` encrypts each stored Proton session with AES-256-GCM using `SESSION_SECRET` (required in production; in dev one is generated into `${DATA_DIR}/dev-session-secret`). Layout: `${DATA_DIR}/users/<userId>/session.json.enc`, `commands.jsonl`, and `${DATA_DIR}/cookies.json` (token hashes → `userId`). Proton passwords are never stored.
+- **Command log:** `{time, userId, vin, command, result}` per person, shown in Settings (`GET /api/log`).
+- **Delete my data:** Settings button (`POST /api/delete-my-data`) removes the person's session, cookies and log.
+- **Migration:** a plain `/data/session.json` becomes the first user's encrypted session on startup, flagged `legacy`; the first browser to call `/api/session` claims it and gets a cookie, so the owner needn't sign in again.
+- `proton/push-device.ts` tracks its retry back-off per `userId`. The pinned broker certificate chain, `geocode.json` and the scene caches stay shared.
+- Also done early from the packaging list: `/api/health`, `HOST`/`PORT`, and a Docker health check in `compose.yaml`.
 
-### Code that assumes one person today (web/server)
-- `index.ts`: module-level `let session` and `let client`, plus `proton()` and `signOut()`. Replace them with a per-request lookup: cookie → `userId` → session plus a cached `ProtonClient` (a `Map`).
-- `session-store.ts`: one `${DATA_DIR}/session.json`. Move to `${DATA_DIR}/users/<userId>/session.json.enc`, plus `cookies.json` mapping token hashes to `userId` (store hashes, not raw tokens).
-- **Migration:** an existing plain `/data/session.json` becomes the first user's encrypted session on startup. The owner shouldn't need to sign in again.
-- `proton/push-device.ts`: `lastFailure` is module-level; make it per person.
-- `proton/mqtt.ts`: one connection per push device ID is already per person. The pinned broker certificate chain (`mqtt-<env>-chain.pem`) and `geocode.json` stay shared.
-- Scene and image caches under `${DATA_DIR}/scene` are fine to share.
+### Checked with a real account (15 October 2026)
+Sign-in, reload keeping the session, a second browser with a non-listed number refused before Proton, the command log filling, Delete my data, and Proton Link signing in on the phone sending the browser back to the sign-in screen with its tokens removed.
 
-### Packaging (after the multi-user work)
+### Planned next: packaging
 - **GitHub Actions on a tag `web-v*`:** build `web/Containerfile` for amd64 and arm64, push `ghcr.io/shananyaa/<name>-web:<version>` and `:latest`, and create a GitHub Release with notes and a ready `compose.yaml`.
 - **Production settings:** `SESSION_SECRET`, `ALLOWED_PHONES`, `ALLOWED_HOSTS` (the public hostname), `TZ`, a configurable listen address and port, and a `/api/health` endpoint for Docker's health check.
 - **`web/DEPLOY.md`:**

@@ -51,6 +51,11 @@ export function App() {
           setSession(await api.logout());
           client.clear();
         }}
+        onDeleteData={async () => {
+          setSession(await api.deleteMyData());
+          setNotice("Your data was removed from the server.");
+          client.clear();
+        }}
       />
     </CommandProvider>
   );
@@ -108,7 +113,10 @@ function SignIn({ notice, onDone }: { notice: string | null; onDone: (s: Session
         <button className="btn primary" disabled={busy}>
           {busy && <LoaderCircle size={18} className="spin" />} {busy ? "Signing in…" : "Sign in"}
         </button>
-        <small className="muted">Your password goes only to this server, which passes it to Proton and keeps just the session tokens.</small>
+        <small className="muted">
+          Your password goes only to this server, which passes it to Proton and keeps just the session tokens. Proton allows one
+          session per account, so signing in here signs the Proton Link app on your phone out.
+        </small>
       </form>
     </main>
   );
@@ -121,7 +129,7 @@ const NAV: { route: Route; label: string; icon: LucideIcon }[] = [
   { route: { name: "settings" }, label: "Settings", icon: Settings },
 ];
 
-function Home({ account, onSignOut }: { account: string | null; onSignOut: () => void }) {
+function Home({ account, onSignOut, onDeleteData }: { account: string | null; onSignOut: () => void; onDeleteData: () => Promise<void> }) {
   const route = useRoute();
   const vehicles = useVehicles();
   const notices = useNotices();
@@ -180,7 +188,7 @@ function Home({ account, onSignOut }: { account: string | null; onSignOut: () =>
         {vehicle && route.name === "condition" && <ConditionView vehicle={vehicle} />}
         {vehicle && route.name === "trips" && <TripsView key={vehicle.vin} vin={vehicle.vin!} tripId={route.tripId} />}
         {route.name === "inbox" && <InboxView />}
-        {route.name === "settings" && <SettingsView account={account} vehicles={list} onSignOut={onSignOut} />}
+        {route.name === "settings" && <SettingsView account={account} vehicles={list} onSignOut={onSignOut} onDeleteData={onDeleteData} />}
       </main>
 
       <nav className="tabbar" aria-label="Main">{navItems(true)}</nav>

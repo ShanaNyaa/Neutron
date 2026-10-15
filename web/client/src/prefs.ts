@@ -6,16 +6,20 @@ import { useSyncExternalStore } from "react";
  */
 export type TyreUnit = "psi" | "kPa" | "bar";
 export type PickerStyle = "wheel" | "slider" | "dial";
+/** A Car condition widget takes one slot (small) or a whole row (wide). */
+export type WidgetSize = "small" | "wide";
 export type Prefs = {
   tyreUnit: TyreUnit;
   pickerStyle: PickerStyle;
   /** Car condition widgets in order; null means the default set. */
   conditionWidgets: string[] | null;
+  /** Widget id → size, for widgets changed from their default size. */
+  conditionSizes: Record<string, WidgetSize> | null;
 };
 
 const KEY = "neutron.prefs";
 // Most Malaysian tyre placards and petrol-station pumps read PSI.
-const DEFAULTS: Prefs = { tyreUnit: "psi", pickerStyle: "wheel", conditionWidgets: null };
+const DEFAULTS: Prefs = { tyreUnit: "psi", pickerStyle: "wheel", conditionWidgets: null, conditionSizes: null };
 
 function read(): Prefs {
   try {
