@@ -63,7 +63,8 @@ to that person's Proton session on the server.
 
 - `ALLOWED_PHONES` lists who may sign in (comma-separated, any format). Any other number is
   refused before Proton is contacted, and five failed sign-ins lock a number or address out for
-  15 minutes. Left empty, only the first person to sign in (the owner) may use the server.
+  15 minutes. Left empty, only the first person to sign in (the owner) may use the server. Set
+  to `*`, anyone with a Proton Link account may sign in; the lockout still applies.
 - `SESSION_SECRET` encrypts everyone's Proton tokens at rest (AES-256-GCM). It's required in
   production; in dev one is generated into the data volume.
 - Signing in on a second device keeps the first one signed in. Proton allows one session per

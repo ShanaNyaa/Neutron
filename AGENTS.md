@@ -60,14 +60,15 @@ Docs: https://docs.expo.dev/eas/index.md
 
 ## Neutron for several people on one server
 
-Built October 2026 (agreed with the owner). Friends (fewer than 5 for now) open the same Neutron
-server, each signs in with **their own** Proton Link account and controls **only their own** car.
+Built October 2026 (agreed with the owner). Several people open the same Neutron server, each
+signs in with **their own** Proton Link account and controls **only their own** car. A server can
+be open to anyone with a Proton Link account (`ALLOWED_PHONES=*`) or limited to a list.
 
 ### How it works
 - **Proton login is the Neutron login.** No separate accounts. Signing in with a Proton number and password creates or reuses that person's server-side session, keyed by Proton `userId`.
 - **Browser ↔ person:** on sign-in the server issues a random session token in a cookie (`neutron_session`: `HttpOnly`, `Secure` when the page came over HTTPS, `SameSite=Lax`, 30 days). Every `/api/*` request finds the person from that cookie (`resolveUser` in `web/server/index.ts`) and uses **only** their Proton session and `ProtonClient`, kept in a `Map` by `userId`. Nothing falls back to "the" session.
 - **Several devices per person:** a second sign-in for the same `userId` replaces that person's stored Proton tokens (Proton allows one session per account) and keeps their other cookies valid. Sign out drops one cookie; the last sign-out also removes the Proton tokens.
-- **Who may use the server:** `ALLOWED_PHONES` (comma-separated, any format; compared after `normalizeMsisdn`). Any other number is refused **before** contacting Proton. Five failures per number or address lock sign-in for 15 minutes, and each failure waits a second. Empty means only the first person to sign in (the owner) and people already on the server, so a fresh server is never open to everyone.
+- **Who may use the server:** `ALLOWED_PHONES` (comma-separated, any format; compared after `normalizeMsisdn`). Any other number is refused **before** contacting Proton. Five failures per number or address lock sign-in for 15 minutes, and each failure waits a second. Empty means only the first person to sign in (the owner) and people already on the server, so a fresh server is never open by accident. `*` opens it to anyone with a Proton Link account; the lockout still applies.
 - **Tokens at rest:** `web/server/users.ts` encrypts each stored Proton session with AES-256-GCM using `SESSION_SECRET` (required in production; in dev one is generated into `${DATA_DIR}/dev-session-secret`). Layout: `${DATA_DIR}/users/<userId>/session.json.enc`, `commands.jsonl`, and `${DATA_DIR}/cookies.json` (token hashes → `userId`). Proton passwords are never stored.
 - **Command log:** `{time, userId, vin, command, result}` per person, shown in Settings (`GET /api/log`).
 - **Delete my data:** Settings button (`POST /api/delete-my-data`) removes the person's session, cookies and log.
@@ -78,13 +79,8 @@ server, each signs in with **their own** Proton Link account and controls **only
 ### Checked with a real account (15 October 2026)
 Sign-in, reload keeping the session, a second browser with a non-listed number refused before Proton, the command log filling, Delete my data, and Proton Link signing in on the phone sending the browser back to the sign-in screen with its tokens removed.
 
-### Planned next: packaging
-- **GitHub Actions on a tag `web-v*`:** build `web/Containerfile` for amd64 and arm64, push `ghcr.io/shananyaa/neutron-web:<version>` and `:latest`, and create a GitHub Release with notes and a ready `compose.yaml`.
-- **Production settings:** `SESSION_SECRET`, `ALLOWED_PHONES`, `ALLOWED_HOSTS` (the public hostname), `TZ`, a configurable listen address and port, and a `/api/health` endpoint for Docker's health check.
-- **`web/DEPLOY.md`:**
-  - requirements: Docker or Podman; outbound HTTPS to `app-atlas.acotech.my:8443` and `app.acotech.my:8443`, and port 55883 for MQTT
-  - HTTPS through Caddy, Traefik or Nginx Proxy Manager, Tailscale, or Cloudflare Tunnel (HTTPS is required to install the app)
-  - how to add a friend, update, and back up the data volume
+### Deployment (decided 15 October 2026)
+No CI/CD, published images, releases or tags for the web app. Anyone who wants to host it clones the repository and runs `podman compose --profile prod up -d --build prod` from `web/`, with `SESSION_SECRET`, `ALLOWED_HOSTS` and `ALLOWED_PHONES` set in `compose.yaml` or the environment, and their own HTTPS in front. A GitHub Actions release pipeline was built and then removed the same day; don't propose it again unless the owner asks.
 
 ### Things to tell users
 - Signing in to Neutron signs that person's Proton Link phone app out (one session per account).

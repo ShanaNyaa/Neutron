@@ -7,7 +7,8 @@ x-env: &env
   DATA_DIR: /data
   # Host names allowed in the browser's address bar. Add your LAN name or IP to use it from your phone.
   ALLOWED_HOSTS: localhost,127.0.0.1
-  # Proton numbers that may sign in, comma-separated, any format. Empty: only the first person to sign in.
+  # Who may sign in: Proton numbers, comma-separated, any format; empty for only the first person
+  # to sign in; or "*" for anyone with a Proton Link account.
   ALLOWED_PHONES: ""
   # Encrypts everyone's Proton tokens in the data volume. Required for prod: openssl rand -base64 32
   SESSION_SECRET: ${SESSION_SECRET:-}

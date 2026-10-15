@@ -20,11 +20,15 @@ const PRODUCTION = process.env.NODE_ENV === "production";
 // Host names the browser may use to reach this server. Guards against DNS rebinding.
 const ALLOWED_HOSTS = (process.env.ALLOWED_HOSTS ?? "localhost,127.0.0.1").split(",").map((h) => h.trim());
 // Proton numbers that may sign in, in any format. Empty: only the first person to sign in.
-const ALLOWED_PHONES = (process.env.ALLOWED_PHONES ?? "")
-  .split(",")
-  .map((p) => p.trim())
-  .filter(Boolean)
-  .map((p) => normalizeMsisdn(p));
+// "*": anyone with a Proton Link account (the lockout after failed sign-ins still applies).
+const OPEN_TO_ANYONE = (process.env.ALLOWED_PHONES ?? "").trim() === "*";
+const ALLOWED_PHONES = OPEN_TO_ANYONE
+  ? []
+  : (process.env.ALLOWED_PHONES ?? "")
+      .split(",")
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .map((p) => normalizeMsisdn(p));
 const COOKIE = "neutron_session";
 const COOKIE_MAX_AGE = 30 * 24 * 3600;
 
@@ -94,6 +98,7 @@ const noteFailure = (key: string) => failures.set(key, [...(failures.get(key) ??
  * so that case is settled by userId after Proton answers (see /api/login).
  */
 function allowedPhone(msisdn: string) {
+  if (OPEN_TO_ANYONE) return true;
   if (ALLOWED_PHONES.length) return ALLOWED_PHONES.includes(msisdn);
   if (users.size === 0) return true;
   return [...users.values()].some((u) => u.session.msisdn === msisdn || !u.session.msisdn);
@@ -184,7 +189,7 @@ app.post("/api/login", async (c) => {
     await new Promise((r) => setTimeout(r, 1_000));
     throw e;
   }
-  if (!ALLOWED_PHONES.length && users.size && !users.has(res.userId)) {
+  if (!OPEN_TO_ANYONE && !ALLOWED_PHONES.length && users.size && !users.has(res.userId)) {
     noteFailure(`addr:${address}`);
     return c.json({ error: "That number isn't allowed on this Neutron server. Ask whoever runs it to add you." }, 403);
   }
@@ -335,5 +340,6 @@ if (PRODUCTION) {
 serve({ fetch: app.fetch, port: PORT, hostname: HOST }, ({ port }) => {
   const who = [...users.values()].map((u) => u.session.accountLabel ?? u.session.userId);
   console.log(`[server] Listening on ${HOST}:${port}${who.length ? ` (${who.length} signed in: ${who.join(", ")})` : ""}`);
-  if (!ALLOWED_PHONES.length) console.log("[server] ALLOWED_PHONES is empty: only the first person to sign in may use this server.");
+  if (OPEN_TO_ANYONE) console.log("[server] ALLOWED_PHONES is *: anyone with a Proton Link account may sign in.");
+  else if (!ALLOWED_PHONES.length) console.log("[server] ALLOWED_PHONES is empty: only the first person to sign in may use this server.");
 });
