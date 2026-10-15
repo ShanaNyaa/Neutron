@@ -6,11 +6,11 @@
     <string>development</string>
     <key>com.apple.security.application-groups</key>
     <array>
-      <string>group.com.zackryrosli.mottokar</string>
+      <string>group.com.shananyaa.neutron</string>
     </array>
     <key>keychain-access-groups</key>
     <array>
-      <string>$(AppIdentifierPrefix)com.zackryrosli.mottokar.shared</string>
+      <string>$(AppIdentifierPrefix)com.shananyaa.neutron.shared</string>
     </array>
   </dict>
 </plist>

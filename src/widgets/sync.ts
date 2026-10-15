@@ -65,7 +65,7 @@ export function syncWidgets() {
 }
 
 // Widgets can't fetch images: renders are saved in the shared App Group, named by URL hash.
-const APP_GROUP = "group.com.zackryrosli.mottokar";
+const APP_GROUP = "group.com.shananyaa.neutron";
 function imageDir() {
   const root = Paths.appleSharedContainers?.[APP_GROUP];
   return root ? new Directory(root, "widget-images") : null;
@@ -101,7 +101,7 @@ const ACTIONS: { id: string; symbol: string; label: string }[] = [
 function toWidgetCar(connId: string, vehicle: Vehicle): CarWidgetCar {
   const stored = store.loadSnapshot<VehicleStatus>(connId, vehicle.id, "status");
   const s = stored?.data;
-  const base = `mottokar://vehicle/${connId}/${encodeURIComponent(vehicle.id)}`;
+  const base = `neutron://vehicle/${connId}/${encodeURIComponent(vehicle.id)}`;
   const lock = s?.lock === "unlocked" ? { id: "lock", symbol: "lock.fill", label: "Lock" } : { id: "unlock", symbol: "lock.open.fill", label: "Unlock" };
   const actions = [lock, ...ACTIONS]
     .filter((a) => !vehicle.commands || vehicle.commands.includes(a.id))
@@ -109,7 +109,7 @@ function toWidgetCar(connId: string, vehicle: Vehicle): CarWidgetCar {
     .map((a) => ({
       ...a,
       url: `${base}?action=${a.id}`,
-      target: BACKGROUND.has(a.id) ? `mottokar:${a.id}:${connId}/${vehicle.id}` : undefined,
+      target: BACKGROUND.has(a.id) ? `neutron:${a.id}:${connId}/${vehicle.id}` : undefined,
     }));
   const openCount = s ? [...Object.values(s.doors ?? {}), ...Object.values(s.windows ?? {})].filter((v) => v === "open").length : 0;
   return {

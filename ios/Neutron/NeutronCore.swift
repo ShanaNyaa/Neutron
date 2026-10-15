@@ -1,6 +1,6 @@
 // Copied into the app and widget extension by plugins/with-car-intents.js.
 // Brand-neutral, like src/core: brands implement CarClient in their own files and are listed in
-// MottokarBrands.swift, the way src/providers/index.ts registers providers.
+// NeutronBrands.swift, the way src/providers/index.ts registers providers.
 
 import ActivityKit
 import AppIntents
@@ -12,7 +12,7 @@ internal import ExpoWidgets
 // MARK: - Keychain (the same items expo-secure-store writes; see src/core/secure-kv.ts)
 
 enum SharedKeychain {
-  static let group = "PAJK9L7KYM.com.zackryrosli.mottokar.shared"
+  static let group = "PAJK9L7KYM.com.shananyaa.neutron.shared"
   // expo-secure-store's service for items saved without biometric protection.
   static let service = "app:no-auth"
   static let chunk = 1800
@@ -86,7 +86,7 @@ enum SharedKeychain {
 
 // MARK: - Cars (from the snapshot the app sends the Car widget; see src/widgets/sync.ts)
 
-struct MottokarCarEntity: AppEntity {
+struct NeutronCarEntity: AppEntity {
   let id: String
   let name: String
   let isDefault: Bool
@@ -98,13 +98,13 @@ struct MottokarCarEntity: AppEntity {
   let isLocked: Bool?
 
   static let typeDisplayRepresentation: TypeDisplayRepresentation = "Car"
-  static let defaultQuery = MottokarCarQuery()
+  static let defaultQuery = NeutronCarQuery()
 
   var displayRepresentation: DisplayRepresentation {
     DisplayRepresentation(title: "\(name)", subtitle: isDefault ? "Default car" : nil)
   }
 
-  static func all() -> [MottokarCarEntity] {
+  static func all() -> [NeutronCarEntity] {
     guard let timeline = WidgetsStorage.getArray(forKey: "__expo_widgets_CarWidget_timeline"),
           let entry = timeline.last as? [String: Any],
           let props = entry["props"] as? [String: Any],
@@ -113,7 +113,7 @@ struct MottokarCarEntity: AppEntity {
       guard let id = car["id"] as? String, let name = car["name"] as? String else { return nil }
       // id is "<connection>/<vehicle>"; the vehicle id stands in for a VIN the app didn't send.
       let parts = id.split(separator: "/", maxSplits: 1).map(String.init)
-      return MottokarCarEntity(
+      return NeutronCarEntity(
         id: id,
         name: name,
         isDefault: car["isDefault"] as? Bool ?? false,
@@ -126,7 +126,7 @@ struct MottokarCarEntity: AppEntity {
     }
   }
 
-  static func defaultCar() -> MottokarCarEntity? {
+  static func defaultCar() -> NeutronCarEntity? {
     let cars = all()
     return cars.first { $0.isDefault } ?? cars.first
   }
@@ -151,17 +151,17 @@ struct MottokarCarEntity: AppEntity {
 }
 
 
-struct MottokarCarQuery: EntityQuery {
-  func entities(for identifiers: [String]) async throws -> [MottokarCarEntity] {
-    MottokarCarEntity.all().filter { identifiers.contains($0.id) }
+struct NeutronCarQuery: EntityQuery {
+  func entities(for identifiers: [String]) async throws -> [NeutronCarEntity] {
+    NeutronCarEntity.all().filter { identifiers.contains($0.id) }
   }
 
-  func suggestedEntities() async throws -> [MottokarCarEntity] {
-    MottokarCarEntity.all()
+  func suggestedEntities() async throws -> [NeutronCarEntity] {
+    NeutronCarEntity.all()
   }
 
-  func defaultResult() async -> MottokarCarEntity? {
-    MottokarCarEntity.defaultCar()
+  func defaultResult() async -> NeutronCarEntity? {
+    NeutronCarEntity.defaultCar()
   }
 }
 
@@ -178,12 +178,12 @@ enum CarCommandError: Error, CustomLocalizedStringResourceConvertible {
 
   var localizedStringResource: LocalizedStringResource {
     switch self {
-    case .noCar: "Open Mottokar and add your car first."
-    case .unsupported: "Mottokar can't do this for this car from Shortcuts yet."
-    case .signedOut: "Your sign-in has run out. Open Mottokar to sign in again."
-    case .needsPin: "Open Mottokar and send one command with your PIN, so Shortcuts can use it."
-    case .pinLocked: "Unlock your iPhone first, so Mottokar can use your PIN."
-    case .wrongPin: "Your car PIN has changed. Open Mottokar and enter it again."
+    case .noCar: "Open Neutron and add your car first."
+    case .unsupported: "Neutron can't do this for this car from Shortcuts yet."
+    case .signedOut: "Your sign-in has run out. Open Neutron to sign in again."
+    case .needsPin: "Open Neutron and send one command with your PIN, so Shortcuts can use it."
+    case .pinLocked: "Unlock your iPhone first, so Neutron can use your PIN."
+    case .wrongPin: "Your car PIN has changed. Open Neutron and enter it again."
     case .brand(let message): "\(message)"
     }
   }
@@ -250,7 +250,7 @@ protocol CarClient {
    * Sends `command` and waits for the car's answer if the brand gives one, calling `delivered` once
    * the command reaches the car. Throws if the car or the brand refuses it.
    */
-  mutating func send(_ command: CarCommand, to car: MottokarCarEntity, delivered: () async -> Void) async throws -> CommandOutcome
+  mutating func send(_ command: CarCommand, to car: NeutronCarEntity, delivered: () async -> Void) async throws -> CommandOutcome
   mutating func status(vin: String) async throws -> CarStatus
   /** Fits a command to what the brand accepts (say, its remote start lengths) before it's shown or sent. */
   static func fit(_ command: CarCommand) -> CarCommand
@@ -260,13 +260,13 @@ extension CarClient {
   static func fit(_ command: CarCommand) -> CarCommand { command }
 }
 
-/** Picks a car's client from `brands` (MottokarBrands.swift), like getProvider in src/core/registry.ts. */
+/** Picks a car's client from `brands` (NeutronBrands.swift), like getProvider in src/core/registry.ts. */
 enum CarClients {
-  static func brand(for car: MottokarCarEntity) -> (any CarClient.Type)? {
+  static func brand(for car: NeutronCarEntity) -> (any CarClient.Type)? {
     brands.first { $0.provider == car.provider }
   }
 
-  static func client(for car: MottokarCarEntity) throws -> any CarClient {
+  static func client(for car: NeutronCarEntity) throws -> any CarClient {
     guard let brand = brand(for: car) else { throw CarCommandError.unsupported }
     return try brand.init(connectionId: car.connectionId)
   }
@@ -343,15 +343,15 @@ enum CarCommandRunner {
    * shows the same Live Activity the app does, runs the command, records a new lock state, and
    * optionally notifies. Throws what `run` throws, after reporting it.
    */
-  static func perform(_ requested: CarCommand, on picked: MottokarCarEntity?, notify: Bool, locks: Bool? = nil) async throws -> String {
-    let car = picked ?? MottokarCarEntity.defaultCar()
+  static func perform(_ requested: CarCommand, on picked: NeutronCarEntity?, notify: Bool, locks: Bool? = nil) async throws -> String {
+    let car = picked ?? NeutronCarEntity.defaultCar()
     let command = car.flatMap { CarClients.brand(for: $0) }?.fit(requested) ?? requested
     let activity = CommandActivity(car: car?.name ?? "Car", label: command.label, symbol: command.symbol)
     do {
       let message = try await run(command, on: car, activity: activity)
       let confirmed = message.hasPrefix(command.done)
       // Controls and widgets show the new state now, not after the app next syncs.
-      if let locks, confirmed, let id = car?.id { MottokarCarEntity.setLocked(locks, carId: id) }
+      if let locks, confirmed, let id = car?.id { NeutronCarEntity.setLocked(locks, carId: id) }
       if let activity {
         if confirmed, let timer = command.timer, let minutes = command.minutes { await activity.hold(minutes: minutes, timer: timer) }
         else { await activity.end(stage: confirmed ? "done" : "queued") }
@@ -366,8 +366,8 @@ enum CarCommandRunner {
     }
   }
 
-  static func run(_ command: CarCommand, on picked: MottokarCarEntity?, activity: CommandActivity? = nil) async throws -> String {
-    guard let car = picked ?? MottokarCarEntity.defaultCar() else { throw CarCommandError.noCar }
+  static func run(_ command: CarCommand, on picked: NeutronCarEntity?, activity: CommandActivity? = nil) async throws -> String {
+    guard let car = picked ?? NeutronCarEntity.defaultCar() else { throw CarCommandError.noCar }
     var client = try CarClients.client(for: car)
     let outcome = try await client.send(command, to: car) { await activity?.update(stage: "car") }
     switch outcome {

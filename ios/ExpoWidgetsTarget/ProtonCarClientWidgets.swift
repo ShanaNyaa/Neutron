@@ -39,7 +39,7 @@ final class ProtonResultWatch: @unchecked Sendable {
   // src/providers/proton/mqtt-server.pem, as DER.
   private static let pinnedCert = Data(base64Encoded: "MIIDEzCCAfugAwIBAgIBAjANBgkqhkiG9w0BAQsFADA/MQswCQYDVQQGEwJDTjERMA8GA1UECAwIaGFuZ3pob3UxDDAKBgNVBAoMA0VNUTEPMA0GA1UEAwwGUm9vdENBMB4XDTIwMDUwODA4MDcwNVoXDTMwMDUwNjA4MDcwNVowPzELMAkGA1UEBhMCQ04xETAPBgNVBAgMCGhhbmd6aG91MQwwCgYDVQQKDANFTVExDzANBgNVBAMMBlNlcnZlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALNeWT3pE+QFfiRJzKmnAMUrWo3K2j/Tm3+Xnl6WLz67/0rcYrJbbKvS3uyRP/stXyXEKw9CepyQ1ViBVFkWAoy8qQEOWFDsZc/5UzhXUnb6LXr3qTkFEjNmhj+7uzv/lbBxlUG1NlYzSeOB6/RT8zH/lhOeKhLnWYPXdXKsa1FL6ij4X8DeDO1kY7fvAGmBn/THh1uTpDizM4YmeI+74dmayA5xXvARte5h4Vu5SIze7iC057N+vymToMk2Jgk+ZZFpyXrnq+yo6RaD3ANclrc4FbeUQZ5a5s5Sxgs9a0Y3WMG+7c5VnVXcbjBRz/aq2NtOnQQjikKKQA8GF080BQkCAwEAAaMaMBgwCQYDVR0TBAIwADALBgNVHQ8EBAMCBeAwDQYJKoZIhvcNAQELBQADggEBAJefnMZpaRDHQSNUIEL3iwGXE9c6PmIsQVE2ustr+CakBp3TZ4l0enLtiGMfEVFju69cO4oyokWv+hl5eCMkHBf14Kv51vj448jowYnF1zmzn7SEzm5UzlsasqjtAprnLyof69WtLU1j5rYWBuFX86yOTwRAFNjm9fvhAcrEONBsQtqipBWkMROpiUYMkRqbKcQMdwxov+lHBYKq9zbWRoqLROAn54SRqgQk6c15JdEfgOOjShbsOkIHUhqcwRkQic7n1zwHVGVDgNIZVgmJ2IdIWBlPEC7oLrRrBD/X1iEEXtKab6p5o22nKB5mN+iQaE+Oe2cpGKZJiJRdM+IqDDQ=")
 
-  private let queue = DispatchQueue(label: "com.zackryrosli.mottokar.mqtt")
+  private let queue = DispatchQueue(label: "com.shananyaa.neutron.mqtt")
   private let connection: NWConnection
   private let deviceId: String
   private let password: String
@@ -272,7 +272,7 @@ extension ProtonCarClient: CarClient {
   }
 
   /** Mirrors the app's Proton sendCommand: the car's answer comes over MQTT. */
-  mutating func send(_ command: CarCommand, to car: MottokarCarEntity, delivered: () async -> Void) async throws -> CommandOutcome {
+  mutating func send(_ command: CarCommand, to car: NeutronCarEntity, delivered: () async -> Void) async throws -> CommandOutcome {
     guard let request = ProtonControl(command) else { throw CarCommandError.unsupported }
     if car.pinRequired { try await checkPin(vin: car.vin) }
     // Listen before sending: a fast car can answer before the HTTP call returns.

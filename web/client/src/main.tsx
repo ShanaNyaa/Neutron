@@ -6,7 +6,7 @@ import { App } from "./App.tsx";
 import "./styles.css";
 import { applyStoredTheme } from "./theme.ts";
 
-// Settings saved before the rename from Mottokar keep working: copy them across once.
+// Settings saved under the app's earlier key prefix keep working: copy them across once.
 try {
   for (const old of ["theme", "prefs", "vin", "engineRun"]) {
     const value = localStorage.getItem(`mottokar.${old}`);

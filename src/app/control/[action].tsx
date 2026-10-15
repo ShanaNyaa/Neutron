@@ -3,7 +3,7 @@ import { Redirect, useLocalSearchParams } from "expo-router";
 import { Empty } from "@/components/ui";
 import * as store from "@/core/store";
 
-/** Target of the Control Center / Lock Screen controls: mottokar://control/<command>. */
+/** Target of the Control Center / Lock Screen controls: neutron://control/<command>. */
 export default function ControlAction() {
   const { action } = useLocalSearchParams<{ action: string }>();
   const cars = store.allVehicles();

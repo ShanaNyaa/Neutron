@@ -14,22 +14,22 @@ const NATIVE = path.join(__dirname, 'native');
 // skips a file whose name is already in the project.
 const FILES = {
   app: [
-    ['MottokarCore.swift', 'MottokarCore.swift'],
-    ['MottokarIntents.swift', 'MottokarIntents.swift'],
-    ['MottokarShortcuts.swift', 'MottokarShortcuts.swift'],
-    ['MottokarBrands.swift', 'MottokarBrands.swift'],
+    ['NeutronCore.swift', 'NeutronCore.swift'],
+    ['NeutronIntents.swift', 'NeutronIntents.swift'],
+    ['NeutronShortcuts.swift', 'NeutronShortcuts.swift'],
+    ['NeutronBrands.swift', 'NeutronBrands.swift'],
     ['ProtonCarClient.swift', 'ProtonCarClient.swift'],
   ],
   ext: [
-    ['MottokarCore.swift', 'MottokarCoreWidgets.swift'],
-    ['MottokarIntents.swift', 'MottokarIntentsWidgets.swift'],
+    ['NeutronCore.swift', 'NeutronCoreWidgets.swift'],
+    ['NeutronIntents.swift', 'NeutronIntentsWidgets.swift'],
     ['CarControls.swift', 'CarControls.swift'],
-    ['MottokarBrands.swift', 'MottokarBrandsWidgets.swift'],
+    ['NeutronBrands.swift', 'NeutronBrandsWidgets.swift'],
     ['ProtonCarClient.swift', 'ProtonCarClientWidgets.swift'],
   ],
 };
 const CAR_WIDGETS = ['CarWidget', 'CarLockWidget'];
-const KEYCHAIN_GROUP = '$(AppIdentifierPrefix)com.zackryrosli.mottokar.shared';
+const KEYCHAIN_GROUP = '$(AppIdentifierPrefix)com.shananyaa.neutron.shared';
 
 function copyFiles(dir, files) {
   for (const [source, name] of files) fs.copyFileSync(path.join(NATIVE, source), path.join(dir, name));
@@ -94,7 +94,7 @@ const withCarIntents = (config) => {
       for (const [, name] of files) {
         if (group.children.some((c) => c.comment === name)) continue;
         // The app's group has no folder path of its own (its files carry it, e.g.
-        // "Mottokar/AppDelegate.swift"); the widget extension's group does.
+        // "Neutron/AppDelegate.swift"); the widget extension's group does.
         const filePath = group.path ? name : `${groupName}/${name}`;
         project.addSourceFile(filePath, { target: targetUuid }, groupKey);
       }
@@ -113,7 +113,7 @@ const withCarIntents = (config) => {
       for (const ref of lists[listId]?.buildConfigurations ?? []) {
         const settings = configs[ref.value]?.buildSettings;
         if (!settings) continue;
-        settings.SWIFT_ACTIVE_COMPILATION_CONDITIONS = '"$(inherited) MOTTOKAR_WIDGET_EXTENSION"';
+        settings.SWIFT_ACTIVE_COMPILATION_CONDITIONS = '"$(inherited) NEUTRON_WIDGET_EXTENSION"';
         if (deploymentTarget) settings.IPHONEOS_DEPLOYMENT_TARGET = deploymentTarget;
       }
     }

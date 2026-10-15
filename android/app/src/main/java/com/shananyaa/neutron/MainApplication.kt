@@ -1,4 +1,4 @@
-package com.zackryrosli.mottokar
+package com.shananyaa.neutron
 import com.facebook.react.common.assets.ReactFontManager
 
 import android.app.Application

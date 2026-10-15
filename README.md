@@ -1,10 +1,10 @@
-# Mottokar
+# Neutron
 
 An iOS and Android app for controlling connected cars: lock and unlock, remote start, climate, find the car, and read its status. It talks to each brand's own backend with the account you already use in the brand's app.
 
-There's also a web version for Proton cars in `web/`, called **Neutron** (a working name): a React app with a small Node server, run with Podman.
+There's also a web version for Proton cars in `web/`: a React app with a small Node server, run with Podman, that several people can share.
 
-This is a fork of [zekr89/mottokar](https://github.com/zekr89/mottokar). The web version is added here.
+Neutron began as a fork of [Mottokar](https://github.com/zekr89/mottokar) by Zackry Rosli, which is the origin of the mobile app. The web version is added here.
 
 Brands:
 
@@ -15,7 +15,7 @@ Brands:
 Beyond the app itself, on iOS it adds:
 
 - Home Screen widgets, a Lock Screen widget, and Control Center controls.
-- Siri and Shortcuts actions ("Lock my car with Mottokar").
+- Siri and Shortcuts actions ("Lock my car with Neutron").
 - A Live Activity that tracks each command from phone to cloud to car, on the Lock Screen, Dynamic Island and CarPlay.
 
 ## Running it
@@ -28,7 +28,7 @@ bunx expo run:ios        # or: bunx expo run:android
 bunx expo start          # the dev server, once a build is installed
 ```
 
-### Web version (Neutron)
+### Web version
 
 Needs only Podman; Node and the npm packages stay inside the containers. From `web/`:
 
@@ -73,7 +73,7 @@ web/              Browser version (React + Node), run with Podman. See web/READM
 
 1. Add `src/providers/<brand>/index.ts` exporting a `ProviderDefinition` (see `src/core/provider.ts` for the contract and `src/providers/proton/` for a full one).
 2. List it in `src/providers/index.ts`.
-3. For Shortcuts and Control Center support, add a `CarClient` in `plugins/native/<Brand>CarClient.swift`, list it in `MottokarBrands.swift`, and add both file copies to `plugins/with-car-intents.js`. Without this the brand still works in the app and its widgets open the app.
+3. For Shortcuts and Control Center support, add a `CarClient` in `plugins/native/<Brand>CarClient.swift`, list it in `NeutronBrands.swift`, and add both file copies to `plugins/with-car-intents.js`. Without this the brand still works in the app and its widgets open the app.
 
 ## Proton
 

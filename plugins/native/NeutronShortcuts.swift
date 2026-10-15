@@ -3,7 +3,7 @@
 
 import AppIntents
 
-struct MottokarShortcuts: AppShortcutsProvider {
+struct NeutronShortcuts: AppShortcutsProvider {
   static var appShortcuts: [AppShortcut] {
     AppShortcut(
       intent: LockCarIntent(),

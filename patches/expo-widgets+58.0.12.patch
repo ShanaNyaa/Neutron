@@ -153,7 +153,7 @@ index 4150678..6973fb4 100644
  
    func reload() {
      WidgetCenter.shared.reloadTimelines(ofKind: name)
-+    // Patched for Mottokar: Control Center controls show state from the same snapshot.
++    // Patched for Neutron: Control Center controls show state from the same snapshot.
 +    if #available(iOS 18.0, *) { ControlCenter.shared.reloadAllControls() }
    }
  
@@ -166,7 +166,7 @@ index 1730fff..eb81942 100644
  import AppIntents
  import WidgetKit
  
-+/// Patched for Mottokar: implemented by the host app to handle widget buttons natively.
++/// Patched for Neutron: implemented by the host app to handle widget buttons natively.
 +@objc public protocol WidgetsNativeActions {
 +  /// Returns true when it handled the target (the widget's JS handler is then skipped).
 +  static func handle(target: String) async -> Bool
@@ -179,10 +179,10 @@ index 1730fff..eb81942 100644
        return .result()
      }
  
-+    // Patched for Mottokar (patches/expo-widgets+*.patch): the host app can handle a button
++    // Patched for Neutron (patches/expo-widgets+*.patch): the host app can handle a button
 +    // natively, e.g. to send a car command in the background, by providing an @objc class
-+    // named MottokarWidgetActions. It claims only the targets it knows.
-+    if let target, let actions = NSClassFromString("MottokarWidgetActions") as? WidgetsNativeActions.Type,
++    // named NeutronWidgetActions. It claims only the targets it knows.
++    if let target, let actions = NSClassFromString("NeutronWidgetActions") as? WidgetsNativeActions.Type,
 +       await actions.handle(target: target) {
 +      WidgetCenter.shared.reloadTimelines(ofKind: source)
 +      return .result()

@@ -42,7 +42,7 @@ Docs: https://docs.expo.dev/eas/index.md
 
 ## Web app: Neutron (`web/`)
 
-`web/` is Neutron (a working name), a separate React (Vite) + Node (Hono) app for Proton cars, built on this repo's Mottokar mobile app. The Expo rules above don't apply to it. See `web/README.md`.
+`web/` is the Neutron web app, a separate React (Vite) + Node (Hono) app for Proton cars that shares the mobile app's Proton mappers. The Expo rules above don't apply to it. See `web/README.md`.
 
 - Run everything through Podman, from `web/`. Never install Node packages on the host:
   - `podman compose up`: dev server on http://localhost:5173
@@ -78,7 +78,7 @@ server, each signs in with **their own** Proton Link account and controls **only
 Sign-in, reload keeping the session, a second browser with a non-listed number refused before Proton, the command log filling, Delete my data, and Proton Link signing in on the phone sending the browser back to the sign-in screen with its tokens removed.
 
 ### Planned next: packaging
-- **GitHub Actions on a tag `web-v*`:** build `web/Containerfile` for amd64 and arm64, push `ghcr.io/shananyaa/<name>-web:<version>` and `:latest`, and create a GitHub Release with notes and a ready `compose.yaml`.
+- **GitHub Actions on a tag `web-v*`:** build `web/Containerfile` for amd64 and arm64, push `ghcr.io/shananyaa/neutron-web:<version>` and `:latest`, and create a GitHub Release with notes and a ready `compose.yaml`.
 - **Production settings:** `SESSION_SECRET`, `ALLOWED_PHONES`, `ALLOWED_HOSTS` (the public hostname), `TZ`, a configurable listen address and port, and a `/api/health` endpoint for Docker's health check.
 - **`web/DEPLOY.md`:**
   - requirements: Docker or Podman; outbound HTTPS to `app-atlas.acotech.my:8443` and `app.acotech.my:8443`, and port 55883 for MQTT
@@ -91,6 +91,6 @@ Sign-in, reload keeping the session, a second browser with a non-listed number r
 - The server owner hosts everyone's Proton session tokens. Friends should be comfortable with that.
 - Neutron uses Proton's private API: unofficial, and it could stop working at any time.
 
-### Not decided yet
-- The final product name ("Neutron" is a working name). Rename before the first public release, since the image name and URLs come from it.
+### Decided
+- The product name is Neutron, for the mobile app and the web app (renamed from Mottokar, the fork's origin, in October 2026; the mobile app got a new identity, `com.shananyaa.neutron`). Credit to Mottokar by Zackry Rosli stays in the README and both Settings screens.
 - Whether display settings (theme, units, layout) should sync per person on the server. Today they're per device in localStorage.

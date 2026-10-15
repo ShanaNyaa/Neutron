@@ -6,8 +6,8 @@
     {
       "layers" : [
         {
-          "image-name" : "mottokar.svg",
-          "name" : "mottokar"
+          "image-name" : "neutron.svg",
+          "name" : "neutron"
         }
       ],
       "shadow" : {

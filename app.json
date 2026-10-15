@@ -1,6 +1,6 @@
 {
   "expo": {
-    "scheme": "mottokar",
+    "scheme": "neutron",
     "userInterfaceStyle": "automatic",
     "orientation": "default",
     "plugins": [
@@ -64,7 +64,7 @@
       [
         "expo-widgets",
         {
-          "groupIdentifier": "group.com.zackryrosli.mottokar",
+          "groupIdentifier": "group.com.shananyaa.neutron",
           "widgets": [
             {
               "name": "CarWidget",
@@ -131,24 +131,24 @@
       ],
       "expo-background-task"
     ],
-    "name": "Mottokar",
-    "slug": "mottokar",
+    "name": "Neutron",
+    "slug": "neutron",
     "icon": "./assets/icon.png",
     "ios": {
-      "icon": "./assets/Mottokar.icon",
-      "bundleIdentifier": "com.zackryrosli.mottokar",
+      "icon": "./assets/Neutron.icon",
+      "bundleIdentifier": "com.shananyaa.neutron",
       "appleTeamId": "PAJK9L7KYM",
       "entitlements": {
         "com.apple.security.application-groups": [
-          "group.com.zackryrosli.mottokar"
+          "group.com.shananyaa.neutron"
         ],
         "keychain-access-groups": [
-          "$(AppIdentifierPrefix)com.zackryrosli.mottokar.shared"
+          "$(AppIdentifierPrefix)com.shananyaa.neutron.shared"
         ]
       }
     },
     "android": {
-      "package": "com.zackryrosli.mottokar",
+      "package": "com.shananyaa.neutron",
       "adaptiveIcon": {
         "foregroundImage": "./assets/android-icon-foreground.png",
         "monochromeImage": "./assets/android-icon-foreground.png",

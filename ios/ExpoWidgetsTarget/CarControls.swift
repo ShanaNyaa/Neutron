@@ -10,7 +10,7 @@ internal import ExpoWidgets
 struct CarControlConfiguration: ControlConfigurationIntent {
   static let title: LocalizedStringResource = "Choose a Car"
   static let isDiscoverable = false
-  @Parameter(title: "Car") var car: MottokarCarEntity?
+  @Parameter(title: "Car") var car: NeutronCarEntity?
 
   init() {}
 
@@ -18,18 +18,18 @@ struct CarControlConfiguration: ControlConfigurationIntent {
 }
 
 /** The chosen car, looked up again: the copy iOS stores with the control holds an old snapshot. */
-private func resolve(_ configuration: CarControlConfiguration) -> MottokarCarEntity? {
-  if let id = configuration.car?.id, let car = MottokarCarEntity.all().first(where: { $0.id == id }) { return car }
-  return MottokarCarEntity.defaultCar()
+private func resolve(_ configuration: CarControlConfiguration) -> NeutronCarEntity? {
+  if let id = configuration.car?.id, let car = NeutronCarEntity.all().first(where: { $0.id == id }) { return car }
+  return NeutronCarEntity.defaultCar()
 }
 
 struct ChosenCar: AppIntentControlValueProvider {
-  func previewValue(configuration: CarControlConfiguration) -> MottokarCarEntity? { nil }
-  func currentValue(configuration: CarControlConfiguration) async throws -> MottokarCarEntity? { resolve(configuration) }
+  func previewValue(configuration: CarControlConfiguration) -> NeutronCarEntity? { nil }
+  func currentValue(configuration: CarControlConfiguration) async throws -> NeutronCarEntity? { resolve(configuration) }
 }
 
 /** The command's name, with the car's name under it so controls for different cars can be told apart. */
-private func carLabel(_ title: String, systemImage: String, car: MottokarCarEntity?) -> some View {
+private func carLabel(_ title: String, systemImage: String, car: NeutronCarEntity?) -> some View {
   Label {
     Text(title)
     Text(car?.name ?? "")
@@ -48,11 +48,11 @@ struct SetCarLockIntent: SetValueIntent {
   // Must be a compile-time constant (App Intents reads it at build time), so it can't follow
   // the in-app "Require Face ID" switch: Face ID every time, even with the iPhone unlocked.
   static let authenticationPolicy: IntentAuthenticationPolicy = .requiresLocalDeviceAuthentication
-  @Parameter(title: "Car") var car: MottokarCarEntity?
+  @Parameter(title: "Car") var car: NeutronCarEntity?
   @Parameter(title: "Locked") var value: Bool
 
   init() {}
-  init(car: MottokarCarEntity?) { self.car = car }
+  init(car: NeutronCarEntity?) { self.car = car }
 
   func perform() async throws -> some IntentResult {
     _ = try await runCarIntent(value ? .lock : .unlock, car: car, notify: true, locks: value)
@@ -63,7 +63,7 @@ struct SetCarLockIntent: SetValueIntent {
 /** One control for both: on when the car is locked; flipping it locks or unlocks. */
 struct CarLockControl: ControlWidget {
   var body: some ControlWidgetConfiguration {
-    AppIntentControlConfiguration(kind: "com.zackryrosli.mottokar.control.lock", provider: ChosenCar()) { car in
+    AppIntentControlConfiguration(kind: "com.shananyaa.neutron.control.lock", provider: ChosenCar()) { car in
       ControlWidgetToggle(isOn: car?.isLocked ?? true, action: SetCarLockIntent(car: car)) {
         Label {
           Text("Car Lock")
@@ -83,7 +83,7 @@ struct CarLockControl: ControlWidget {
 
 struct StartCarControl: ControlWidget {
   var body: some ControlWidgetConfiguration {
-    AppIntentControlConfiguration(kind: "com.zackryrosli.mottokar.control.engine_start", provider: ChosenCar()) { car in
+    AppIntentControlConfiguration(kind: "com.shananyaa.neutron.control.engine_start", provider: ChosenCar()) { car in
       ControlWidgetButton(action: StartEngineIntent(car: car, notify: true)) { carLabel("Start", systemImage: "power", car: car) }
     }
     .displayName("Start Engine")
@@ -94,7 +94,7 @@ struct StartCarControl: ControlWidget {
 
 struct ClimateCarControl: ControlWidget {
   var body: some ControlWidgetConfiguration {
-    AppIntentControlConfiguration(kind: "com.zackryrosli.mottokar.control.climate_on", provider: ChosenCar()) { car in
+    AppIntentControlConfiguration(kind: "com.shananyaa.neutron.control.climate_on", provider: ChosenCar()) { car in
       ControlWidgetButton(action: StartClimateIntent(car: car, notify: true)) { carLabel("Climate", systemImage: "fanblades.fill", car: car) }
     }
     .displayName("Climate")
@@ -105,7 +105,7 @@ struct ClimateCarControl: ControlWidget {
 
 struct FindCarControl: ControlWidget {
   var body: some ControlWidgetConfiguration {
-    AppIntentControlConfiguration(kind: "com.zackryrosli.mottokar.control.horn_lights", provider: ChosenCar()) { car in
+    AppIntentControlConfiguration(kind: "com.shananyaa.neutron.control.horn_lights", provider: ChosenCar()) { car in
       ControlWidgetButton(action: FindCarIntent(car: car, notify: true)) { carLabel("Find", systemImage: "headlight.low.beam.fill", car: car) }
     }
     .displayName("Find Car")
@@ -124,14 +124,14 @@ struct CarControlsBundle: WidgetBundle {
 }
 
 /**
- * Widget button targets, "mottokar:<command>:<car id>". The expo-widgets patch in patches/
+ * Widget button targets, "neutron:<command>:<car id>". The expo-widgets patch in patches/
  * looks this class up by name. Unlock and Start are deliberately absent (src/widgets/sync.ts).
  */
-@objc(MottokarWidgetActions)
-final class MottokarWidgetActions: NSObject, WidgetsNativeActions {
+@objc(NeutronWidgetActions)
+final class NeutronWidgetActions: NSObject, WidgetsNativeActions {
   static func handle(target: String) async -> Bool {
     let parts = target.split(separator: ":", maxSplits: 2).map(String.init)
-    guard parts.count == 3, parts[0] == "mottokar" else { return false }
+    guard parts.count == 3, parts[0] == "neutron" else { return false }
     let command: CarCommand
     switch parts[1] {
     case "lock": command = .lock
@@ -140,7 +140,7 @@ final class MottokarWidgetActions: NSObject, WidgetsNativeActions {
     case "horn_lights": command = .find
     default: return false
     }
-    let car = MottokarCarEntity.all().first { $0.id == parts[2] }
+    let car = NeutronCarEntity.all().first { $0.id == parts[2] }
     _ = try? await CarCommandRunner.perform(command, on: car, notify: true, locks: parts[1] == "lock" ? true : nil)
     return true
   }

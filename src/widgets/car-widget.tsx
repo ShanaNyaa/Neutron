@@ -22,7 +22,7 @@ import { createWidget, type WidgetEnvironment } from "expo-widgets";
 export type CarWidgetCar = {
   /** "<connection>/<vehicle>"; what the widget's car picker stores */
   id: string;
-  /** Read by plugins/native/MottokarCore.swift */
+  /** Read by plugins/native/NeutronCore.swift */
   provider?: string;
   vin?: string;
   isPinRequired?: boolean;
@@ -86,7 +86,7 @@ const CarWidget = (props: CarWidgetProps, environment: WidgetEnvironment<CarWidg
     return (
       <VStack modifiers={[containerBackground(bg, "widget")]}>
         <Text modifiers={[font({ size: 13, weight: "medium" }), foregroundStyle(muted)]}>
-          Open Mottokar to add your car
+          Open Neutron to add your car
         </Text>
       </VStack>
     );

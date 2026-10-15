@@ -48,7 +48,7 @@ export async function askForNotifications() {
 }
 
 /**
- * Control Center actions report results as notifications (plugins/native/MottokarCore.swift), but an
+ * Control Center actions report results as notifications (plugins/native/NeutronCore.swift), but an
  * extension can't request the permission itself.
  */
 export async function askForResultNotifications() {

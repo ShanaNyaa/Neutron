@@ -319,7 +319,7 @@ which are in neither the app nor the OpenAPI index:
 | `latitudeOriginal`, `longitudeOriginal` | | The position before any datum shift (see `marsCoordinates`). |
 | `taskId`, `requestId`, `lastUpdate` | | The request that produced the report, and when the server stored it (ms). |
 
-`distanceToService` read `0` on that car. Mobile Mottokar treats 0 as "no interval set"
+`distanceToService` read `0` on that car. The mobile app treats 0 as "no interval set"
 (the car reports it after a service until the next interval is programmed); another
 third-party app shows it as "Service overdue". Which is right isn't known. The web app
 shows it as reported.

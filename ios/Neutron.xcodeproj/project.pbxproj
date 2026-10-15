@@ -7,32 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		005959390C2DD6CA7D716388 /* libPods-Mottokar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F896E0A619EF62CA6E5410EF /* libPods-Mottokar.a */; };
+		005959390C2DD6CA7D716388 /* libPods-Neutron.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F896E0A619EF62CA6E5410EF /* libPods-Neutron.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2001807FC44945EE99E4BF15 /* index.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAED5F0AFF52454BAF78FD33 /* index.swift */; };
 		26A9CF8BE60A44A4B9AD89AF /* InstrumentSans_700Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E5E58857EF1B4EB8AFBC6EB4 /* InstrumentSans_700Bold.ttf */; };
 		3014B992150943168149D1DB /* ProtonCarClientWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F1BF125E08456A8124637C /* ProtonCarClientWidgets.swift */; };
 		3781E527FEE541EF827A933F /* ProtonCarClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27388F6721B84DFD8E96AFB5 /* ProtonCarClient.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		430BD6D1CBBD4A38AF56D242 /* MottokarIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B984E5EB79049069556772F /* MottokarIntents.swift */; };
-		546C6C846E2C4B0E806EECF7 /* MottokarCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023E393215B44E648618220D /* MottokarCore.swift */; };
-		6AA8E1AA3B974A5CB267EE62 /* Mottokar.icon in Resources */ = {isa = PBXBuildFile; fileRef = 709C643403754654A930CC9A /* Mottokar.icon */; };
+		430BD6D1CBBD4A38AF56D242 /* NeutronIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B984E5EB79049069556772F /* NeutronIntents.swift */; };
+		546C6C846E2C4B0E806EECF7 /* NeutronCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023E393215B44E648618220D /* NeutronCore.swift */; };
+		6AA8E1AA3B974A5CB267EE62 /* Neutron.icon in Resources */ = {isa = PBXBuildFile; fileRef = 709C643403754654A930CC9A /* Neutron.icon */; };
 		6D8D1B8D1CA20F1CF75B79F7 /* libPods-ExpoWidgetsTarget.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B9829F57EA796E8D3B8371A /* libPods-ExpoWidgetsTarget.a */; };
 		6F884F7B7253493AB309753D /* InstrumentSans_400Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35F4ED15C7C9464AAB6A1664 /* InstrumentSans_400Regular.ttf */; };
 		7A34018CD401435DBFF78326 /* CarWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B2820C5C3D4394B8615677 /* CarWidget.swift */; };
-		823F0FA5DD4F412A94EFEB4C /* MottokarBrands.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1146EE3EFA49D082617D4E /* MottokarBrands.swift */; };
+		823F0FA5DD4F412A94EFEB4C /* NeutronBrands.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1146EE3EFA49D082617D4E /* NeutronBrands.swift */; };
 		8622D2368999404383C41B53 /* CarControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B7AA6720CE40D5A916731E /* CarControls.swift */; };
 		8E21529F0B87044D81408112 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00F4C23294A353C937FA529E /* ExpoModulesProvider.swift */; };
-		930A4C6BDB1B44BBB2EF6D22 /* MottokarCoreWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DC32619D1B40C09702D1B5 /* MottokarCoreWidgets.swift */; };
-		96A568841B274EF88ED78084 /* MottokarBrandsWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A506F27C2B2F4DC189BA631C /* MottokarBrandsWidgets.swift */; };
+		930A4C6BDB1B44BBB2EF6D22 /* NeutronCoreWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DC32619D1B40C09702D1B5 /* NeutronCoreWidgets.swift */; };
+		96A568841B274EF88ED78084 /* NeutronBrandsWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A506F27C2B2F4DC189BA631C /* NeutronBrandsWidgets.swift */; };
 		9920B94BBA2047289F78F04B /* InstrumentSans_600SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EE4952911058491693710CDE /* InstrumentSans_600SemiBold.ttf */; };
 		9E26D942E364026DF5E60193 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3DA342B95E3DCF2B56041FE /* ExpoModulesProvider.swift */; };
 		9F09BD3750584736B3A25513 /* InstrumentSans_500Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 59850BD1070A4CCE82788A4B /* InstrumentSans_500Medium.ttf */; };
-		AA73B89E66F949D28AA794DE /* MottokarIntentsWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AE999BEEE74695976495E5 /* MottokarIntentsWidgets.swift */; };
+		AA73B89E66F949D28AA794DE /* NeutronIntentsWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AE999BEEE74695976495E5 /* NeutronIntentsWidgets.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		CF70C48DB8D44E18ABACAA2F /* ExpoWidgetsTarget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A27796E424E84116967D5FD4 /* ExpoWidgetsTarget.appex */; };
 		D606FFEAA44F4179BA3AFADB /* CarLockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E873EAF22A48484FBCD7C697 /* CarLockWidget.swift */; };
-		DA4BED7ED0AA47DD8433FD17 /* MottokarShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F083A930A74C5F915149F7 /* MottokarShortcuts.swift */; };
+		DA4BED7ED0AA47DD8433FD17 /* NeutronShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F083A930A74C5F915149F7 /* NeutronShortcuts.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 		F11748442D0307B40044C1D9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748432D0307B40044C1D9 /* SceneDelegate.swift */; };
 		F689FE006BFB3F7954294A34 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 35A1F42AC2894B8E287E981B /* PrivacyInfo.xcprivacy */; };
@@ -63,44 +63,44 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		00F4C23294A353C937FA529E /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Mottokar/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		023E393215B44E648618220D /* MottokarCore.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = MottokarCore.swift; path = Mottokar/MottokarCore.swift; sourceTree = "<group>"; };
+		00F4C23294A353C937FA529E /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Neutron/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		023E393215B44E648618220D /* NeutronCore.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = NeutronCore.swift; path = Neutron/NeutronCore.swift; sourceTree = "<group>"; };
 		05B2820C5C3D4394B8615677 /* CarWidget.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = CarWidget.swift; path = CarWidget.swift; sourceTree = "<group>"; };
 		0B9829F57EA796E8D3B8371A /* libPods-ExpoWidgetsTarget.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ExpoWidgetsTarget.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F09252FACB7447EB4C47F69 /* ExpoWidgetsLayoutRegistry.config.json */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ExpoWidgetsLayoutRegistry.config.json; path = ExpoWidgetsLayoutRegistry.config.json; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* Mottokar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mottokar.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Mottokar/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Mottokar/Info.plist; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* Neutron.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Neutron.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Neutron/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Neutron/Info.plist; sourceTree = "<group>"; };
 		15B7AA6720CE40D5A916731E /* CarControls.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = CarControls.swift; path = CarControls.swift; sourceTree = "<group>"; };
-		27388F6721B84DFD8E96AFB5 /* ProtonCarClient.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ProtonCarClient.swift; path = Mottokar/ProtonCarClient.swift; sourceTree = "<group>"; };
+		27388F6721B84DFD8E96AFB5 /* ProtonCarClient.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ProtonCarClient.swift; path = Neutron/ProtonCarClient.swift; sourceTree = "<group>"; };
 		292B68AD9E1440D0AA960257 /* ExpoWidgetsTarget.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ExpoWidgetsTarget.entitlements; path = ExpoWidgetsTarget.entitlements; sourceTree = "<group>"; };
-		35A1F42AC2894B8E287E981B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Mottokar/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		35A1F42AC2894B8E287E981B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Neutron/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		35F4ED15C7C9464AAB6A1664 /* InstrumentSans_400Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = InstrumentSans_400Regular.ttf; path = "../node_modules/@expo-google-fonts/instrument-sans/400Regular/InstrumentSans_400Regular.ttf"; sourceTree = "<group>"; };
-		3B984E5EB79049069556772F /* MottokarIntents.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = MottokarIntents.swift; path = Mottokar/MottokarIntents.swift; sourceTree = "<group>"; };
+		3B984E5EB79049069556772F /* NeutronIntents.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = NeutronIntents.swift; path = Neutron/NeutronIntents.swift; sourceTree = "<group>"; };
 		59850BD1070A4CCE82788A4B /* InstrumentSans_500Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = InstrumentSans_500Medium.ttf; path = "../node_modules/@expo-google-fonts/instrument-sans/500Medium/InstrumentSans_500Medium.ttf"; sourceTree = "<group>"; };
-		66F083A930A74C5F915149F7 /* MottokarShortcuts.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = MottokarShortcuts.swift; path = Mottokar/MottokarShortcuts.swift; sourceTree = "<group>"; };
+		66F083A930A74C5F915149F7 /* NeutronShortcuts.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = NeutronShortcuts.swift; path = Neutron/NeutronShortcuts.swift; sourceTree = "<group>"; };
 		68F1BF125E08456A8124637C /* ProtonCarClientWidgets.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ProtonCarClientWidgets.swift; path = ProtonCarClientWidgets.swift; sourceTree = "<group>"; };
-		709C643403754654A930CC9A /* Mottokar.icon */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Mottokar.icon; path = Mottokar/Mottokar.icon; sourceTree = "<group>"; };
+		709C643403754654A930CC9A /* Neutron.icon */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Neutron.icon; path = Neutron/Neutron.icon; sourceTree = "<group>"; };
 		A27796E424E84116967D5FD4 /* ExpoWidgetsTarget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = ExpoWidgetsTarget.appex; path = ExpoWidgetsTarget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		A29F879B799113812993C2E2 /* Pods-Mottokar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mottokar.release.xcconfig"; path = "Target Support Files/Pods-Mottokar/Pods-Mottokar.release.xcconfig"; sourceTree = "<group>"; };
-		A2AE999BEEE74695976495E5 /* MottokarIntentsWidgets.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = MottokarIntentsWidgets.swift; path = MottokarIntentsWidgets.swift; sourceTree = "<group>"; };
-		A506F27C2B2F4DC189BA631C /* MottokarBrandsWidgets.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = MottokarBrandsWidgets.swift; path = MottokarBrandsWidgets.swift; sourceTree = "<group>"; };
-		A58B6CF573D23CE8F0B2D112 /* Pods-Mottokar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mottokar.debug.xcconfig"; path = "Target Support Files/Pods-Mottokar/Pods-Mottokar.debug.xcconfig"; sourceTree = "<group>"; };
-		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Mottokar/SplashScreen.storyboard; sourceTree = "<group>"; };
+		A29F879B799113812993C2E2 /* Pods-Neutron.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Neutron.release.xcconfig"; path = "Target Support Files/Pods-Neutron/Pods-Neutron.release.xcconfig"; sourceTree = "<group>"; };
+		A2AE999BEEE74695976495E5 /* NeutronIntentsWidgets.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = NeutronIntentsWidgets.swift; path = NeutronIntentsWidgets.swift; sourceTree = "<group>"; };
+		A506F27C2B2F4DC189BA631C /* NeutronBrandsWidgets.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = NeutronBrandsWidgets.swift; path = NeutronBrandsWidgets.swift; sourceTree = "<group>"; };
+		A58B6CF573D23CE8F0B2D112 /* Pods-Neutron.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Neutron.debug.xcconfig"; path = "Target Support Files/Pods-Neutron/Pods-Neutron.debug.xcconfig"; sourceTree = "<group>"; };
+		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Neutron/SplashScreen.storyboard; sourceTree = "<group>"; };
 		B3652F0CE202ADCF2BD6E371 /* Pods-ExpoWidgetsTarget.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExpoWidgetsTarget.debug.xcconfig"; path = "Target Support Files/Pods-ExpoWidgetsTarget/Pods-ExpoWidgetsTarget.debug.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C4DC32619D1B40C09702D1B5 /* MottokarCoreWidgets.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = MottokarCoreWidgets.swift; path = MottokarCoreWidgets.swift; sourceTree = "<group>"; };
+		C4DC32619D1B40C09702D1B5 /* NeutronCoreWidgets.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = NeutronCoreWidgets.swift; path = NeutronCoreWidgets.swift; sourceTree = "<group>"; };
 		D24F4F8C95064149A2FDB9AA /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
 		E3DA342B95E3DCF2B56041FE /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ExpoWidgetsTarget/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		E5E58857EF1B4EB8AFBC6EB4 /* InstrumentSans_700Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = InstrumentSans_700Bold.ttf; path = "../node_modules/@expo-google-fonts/instrument-sans/700Bold/InstrumentSans_700Bold.ttf"; sourceTree = "<group>"; };
 		E873EAF22A48484FBCD7C697 /* CarLockWidget.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = CarLockWidget.swift; path = CarLockWidget.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EE4952911058491693710CDE /* InstrumentSans_600SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = InstrumentSans_600SemiBold.ttf; path = "../node_modules/@expo-google-fonts/instrument-sans/600SemiBold/InstrumentSans_600SemiBold.ttf"; sourceTree = "<group>"; };
-		EF1146EE3EFA49D082617D4E /* MottokarBrands.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = MottokarBrands.swift; path = Mottokar/MottokarBrands.swift; sourceTree = "<group>"; };
-		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Mottokar/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748432D0307B40044C1D9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = Mottokar/SceneDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* Mottokar-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Mottokar-Bridging-Header.h"; path = "Mottokar/Mottokar-Bridging-Header.h"; sourceTree = "<group>"; };
-		F896E0A619EF62CA6E5410EF /* libPods-Mottokar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mottokar.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF1146EE3EFA49D082617D4E /* NeutronBrands.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = NeutronBrands.swift; path = Neutron/NeutronBrands.swift; sourceTree = "<group>"; };
+		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Neutron/AppDelegate.swift; sourceTree = "<group>"; };
+		F11748432D0307B40044C1D9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = Neutron/SceneDelegate.swift; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* Neutron-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Neutron-Bridging-Header.h"; path = "Neutron/Neutron-Bridging-Header.h"; sourceTree = "<group>"; };
+		F896E0A619EF62CA6E5410EF /* libPods-Neutron.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Neutron.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA235B85C09D44C978BF9D7D /* Pods-ExpoWidgetsTarget.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExpoWidgetsTarget.release.xcconfig"; path = "Target Support Files/Pods-ExpoWidgetsTarget/Pods-ExpoWidgetsTarget.release.xcconfig"; sourceTree = "<group>"; };
 		FAED5F0AFF52454BAF78FD33 /* index.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = index.swift; path = index.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -110,7 +110,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				005959390C2DD6CA7D716388 /* libPods-Mottokar.a in Frameworks */,
+				005959390C2DD6CA7D716388 /* libPods-Neutron.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,25 +125,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* Mottokar */ = {
+		13B07FAE1A68108700A75B9A /* Neutron */ = {
 			isa = PBXGroup;
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
 				F11748432D0307B40044C1D9 /* SceneDelegate.swift */,
-				F11748442D0722820044C1D9 /* Mottokar-Bridging-Header.h */,
+				F11748442D0722820044C1D9 /* Neutron-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				709C643403754654A930CC9A /* Mottokar.icon */,
-				023E393215B44E648618220D /* MottokarCore.swift */,
-				3B984E5EB79049069556772F /* MottokarIntents.swift */,
-				66F083A930A74C5F915149F7 /* MottokarShortcuts.swift */,
-				EF1146EE3EFA49D082617D4E /* MottokarBrands.swift */,
+				709C643403754654A930CC9A /* Neutron.icon */,
+				023E393215B44E648618220D /* NeutronCore.swift */,
+				3B984E5EB79049069556772F /* NeutronIntents.swift */,
+				66F083A930A74C5F915149F7 /* NeutronShortcuts.swift */,
+				EF1146EE3EFA49D082617D4E /* NeutronBrands.swift */,
 				27388F6721B84DFD8E96AFB5 /* ProtonCarClient.swift */,
 				35A1F42AC2894B8E287E981B /* PrivacyInfo.xcprivacy */,
 			);
-			name = Mottokar;
+			name = Neutron;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -151,7 +151,7 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				0B9829F57EA796E8D3B8371A /* libPods-ExpoWidgetsTarget.a */,
-				F896E0A619EF62CA6E5410EF /* libPods-Mottokar.a */,
+				F896E0A619EF62CA6E5410EF /* libPods-Neutron.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -178,7 +178,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* Mottokar */,
+				13B07FAE1A68108700A75B9A /* Neutron */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -195,7 +195,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* Mottokar.app */,
+				13B07F961A680F5B00A75B9A /* Neutron.app */,
 				A27796E424E84116967D5FD4 /* ExpoWidgetsTarget.appex */,
 			);
 			name = Products;
@@ -214,19 +214,19 @@
 			children = (
 				B3652F0CE202ADCF2BD6E371 /* Pods-ExpoWidgetsTarget.debug.xcconfig */,
 				FA235B85C09D44C978BF9D7D /* Pods-ExpoWidgetsTarget.release.xcconfig */,
-				A58B6CF573D23CE8F0B2D112 /* Pods-Mottokar.debug.xcconfig */,
-				A29F879B799113812993C2E2 /* Pods-Mottokar.release.xcconfig */,
+				A58B6CF573D23CE8F0B2D112 /* Pods-Neutron.debug.xcconfig */,
+				A29F879B799113812993C2E2 /* Pods-Neutron.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		A676FCAC82E75F37324678CE /* Mottokar */ = {
+		A676FCAC82E75F37324678CE /* Neutron */ = {
 			isa = PBXGroup;
 			children = (
 				00F4C23294A353C937FA529E /* ExpoModulesProvider.swift */,
 			);
-			name = Mottokar;
+			name = Neutron;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -235,14 +235,14 @@
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
 			);
 			name = Supporting;
-			path = Mottokar/Supporting;
+			path = Neutron/Supporting;
 			sourceTree = "<group>";
 		};
 		DA26B365A9286F0396E850D6 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
 				9000827144249F8ABE6EFBDD /* ExpoWidgetsTarget */,
-				A676FCAC82E75F37324678CE /* Mottokar */,
+				A676FCAC82E75F37324678CE /* Neutron */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
@@ -256,10 +256,10 @@
 				FAED5F0AFF52454BAF78FD33 /* index.swift */,
 				05B2820C5C3D4394B8615677 /* CarWidget.swift */,
 				E873EAF22A48484FBCD7C697 /* CarLockWidget.swift */,
-				C4DC32619D1B40C09702D1B5 /* MottokarCoreWidgets.swift */,
-				A2AE999BEEE74695976495E5 /* MottokarIntentsWidgets.swift */,
+				C4DC32619D1B40C09702D1B5 /* NeutronCoreWidgets.swift */,
+				A2AE999BEEE74695976495E5 /* NeutronIntentsWidgets.swift */,
 				15B7AA6720CE40D5A916731E /* CarControls.swift */,
-				A506F27C2B2F4DC189BA631C /* MottokarBrandsWidgets.swift */,
+				A506F27C2B2F4DC189BA631C /* NeutronBrandsWidgets.swift */,
 				68F1BF125E08456A8124637C /* ProtonCarClientWidgets.swift */,
 			);
 			name = ExpoWidgetsTarget;
@@ -269,9 +269,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* Mottokar */ = {
+		13B07F861A680F5B00A75B9A /* Neutron */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Mottokar" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Neutron" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
 				4539F66ECD3B461A325AE245 /* [Expo] Configure project */,
@@ -289,9 +289,9 @@
 			dependencies = (
 				8D87903D33154082A5C2D9FF /* PBXTargetDependency */,
 			);
-			name = Mottokar;
-			productName = Mottokar;
-			productReference = 13B07F961A680F5B00A75B9A /* Mottokar.app */;
+			name = Neutron;
+			productName = Neutron;
+			productReference = 13B07F961A680F5B00A75B9A /* Neutron.app */;
 			productType = "com.apple.product-type.application";
 		};
 		6B31553456E340389A85145D /* ExpoWidgetsTarget */ = {
@@ -329,7 +329,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Mottokar" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Neutron" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -342,7 +342,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* Mottokar */,
+				13B07F861A680F5B00A75B9A /* Neutron */,
 				6B31553456E340389A85145D /* ExpoWidgetsTarget */,
 			);
 		};
@@ -356,7 +356,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				6AA8E1AA3B974A5CB267EE62 /* Mottokar.icon in Resources */,
+				6AA8E1AA3B974A5CB267EE62 /* Neutron.icon in Resources */,
 				6F884F7B7253493AB309753D /* InstrumentSans_400Regular.ttf in Resources */,
 				9F09BD3750584736B3A25513 /* InstrumentSans_500Medium.ttf in Resources */,
 				9920B94BBA2047289F78F04B /* InstrumentSans_600SemiBold.ttf in Resources */,
@@ -400,7 +400,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Mottokar-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Neutron-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -440,18 +440,18 @@
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env",
 				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/Mottokar/Mottokar.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-Mottokar/expo-configure-project.sh",
+				"$(SRCROOT)/Neutron/Neutron.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-Neutron/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-Mottokar/ExpoModulesProvider.swift",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-Neutron/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Mottokar/expo-configure-project.sh\"\n";
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Neutron/expo-configure-project.sh\"\n";
 		};
 		5053E20AF7B84C42BCD0B36E /* [Expo Dev Launcher] Strip Local Network Keys for Release */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -473,7 +473,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Mottokar/Pods-Mottokar-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Neutron/Pods-Neutron-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoApplication/ExpoApplication_privacy.bundle",
@@ -504,7 +504,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Mottokar/Pods-Mottokar-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Neutron/Pods-Neutron-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		85564074DD8CEE7D8DC973BB /* [CP] Copy Pods Resources */ = {
@@ -559,7 +559,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Mottokar/Pods-Mottokar-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Neutron/Pods-Neutron-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem.framework/ExpoFileSystem",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ExpoFont/ExpoFont.framework/ExpoFont",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ExpoImage/ExpoImage.framework/ExpoImage",
@@ -598,7 +598,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Mottokar/Pods-Mottokar-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Neutron/Pods-Neutron-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -610,10 +610,10 @@
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
 				F11748442D0307B40044C1D9 /* SceneDelegate.swift in Sources */,
-				546C6C846E2C4B0E806EECF7 /* MottokarCore.swift in Sources */,
-				430BD6D1CBBD4A38AF56D242 /* MottokarIntents.swift in Sources */,
-				DA4BED7ED0AA47DD8433FD17 /* MottokarShortcuts.swift in Sources */,
-				823F0FA5DD4F412A94EFEB4C /* MottokarBrands.swift in Sources */,
+				546C6C846E2C4B0E806EECF7 /* NeutronCore.swift in Sources */,
+				430BD6D1CBBD4A38AF56D242 /* NeutronIntents.swift in Sources */,
+				DA4BED7ED0AA47DD8433FD17 /* NeutronShortcuts.swift in Sources */,
+				823F0FA5DD4F412A94EFEB4C /* NeutronBrands.swift in Sources */,
 				3781E527FEE541EF827A933F /* ProtonCarClient.swift in Sources */,
 				8E21529F0B87044D81408112 /* ExpoModulesProvider.swift in Sources */,
 			);
@@ -626,10 +626,10 @@
 				2001807FC44945EE99E4BF15 /* index.swift in Sources */,
 				7A34018CD401435DBFF78326 /* CarWidget.swift in Sources */,
 				D606FFEAA44F4179BA3AFADB /* CarLockWidget.swift in Sources */,
-				930A4C6BDB1B44BBB2EF6D22 /* MottokarCoreWidgets.swift in Sources */,
-				AA73B89E66F949D28AA794DE /* MottokarIntentsWidgets.swift in Sources */,
+				930A4C6BDB1B44BBB2EF6D22 /* NeutronCoreWidgets.swift in Sources */,
+				AA73B89E66F949D28AA794DE /* NeutronIntentsWidgets.swift in Sources */,
 				8622D2368999404383C41B53 /* CarControls.swift in Sources */,
-				96A568841B274EF88ED78084 /* MottokarBrandsWidgets.swift in Sources */,
+				96A568841B274EF88ED78084 /* NeutronBrandsWidgets.swift in Sources */,
 				3014B992150943168149D1DB /* ProtonCarClientWidgets.swift in Sources */,
 				9E26D942E364026DF5E60193 /* ExpoModulesProvider.swift in Sources */,
 			);
@@ -648,11 +648,11 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A58B6CF573D23CE8F0B2D112 /* Pods-Mottokar.debug.xcconfig */;
+			baseConfigurationReference = A58B6CF573D23CE8F0B2D112 /* Pods-Neutron.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = Mottokar;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Neutron;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Mottokar/Mottokar.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Neutron/Neutron.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PAJK9L7KYM;
 				ENABLE_BITCODE = NO;
@@ -660,7 +660,7 @@
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = Mottokar/Info.plist;
+				INFOPLIST_FILE = Neutron/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -674,9 +674,9 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zackryrosli.mottokar;
-				PRODUCT_NAME = Mottokar;
-				SWIFT_OBJC_BRIDGING_HEADER = "Mottokar/Mottokar-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = com.shananyaa.neutron;
+				PRODUCT_NAME = Neutron;
+				SWIFT_OBJC_BRIDGING_HEADER = "Neutron/Neutron-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -686,14 +686,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A29F879B799113812993C2E2 /* Pods-Mottokar.release.xcconfig */;
+			baseConfigurationReference = A29F879B799113812993C2E2 /* Pods-Neutron.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = Mottokar;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Neutron;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Mottokar/Mottokar.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Neutron/Neutron.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PAJK9L7KYM;
-				INFOPLIST_FILE = Mottokar/Info.plist;
+				INFOPLIST_FILE = Neutron/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -707,9 +707,9 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zackryrosli.mottokar;
-				PRODUCT_NAME = Mottokar;
-				SWIFT_OBJC_BRIDGING_HEADER = "Mottokar/Mottokar-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = com.shananyaa.neutron;
+				PRODUCT_NAME = Neutron;
+				SWIFT_OBJC_BRIDGING_HEADER = "Neutron/Neutron-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -865,9 +865,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zackryrosli.mottokar.ExpoWidgetsTarget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shananyaa.neutron.ExpoWidgetsTarget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) MOTTOKAR_WIDGET_EXTENSION";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) NEUTRON_WIDGET_EXTENSION";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -889,9 +889,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zackryrosli.mottokar.ExpoWidgetsTarget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shananyaa.neutron.ExpoWidgetsTarget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) MOTTOKAR_WIDGET_EXTENSION";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) NEUTRON_WIDGET_EXTENSION";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -901,7 +901,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Mottokar" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Neutron" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -910,7 +910,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Mottokar" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Neutron" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

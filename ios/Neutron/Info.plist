@@ -11,7 +11,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Mottokar</string>
+	<string>Neutron</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -31,21 +31,21 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>mottokar</string>
-				<string>com.zackryrosli.mottokar</string>
+				<string>neutron</string>
+				<string>com.shananyaa.neutron</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>exp+mottokar</string>
+				<string>exp+neutron</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>ExpoWidgetsAppGroupIdentifier</key>
-	<string>group.com.zackryrosli.mottokar</string>
+	<string>group.com.shananyaa.neutron</string>
 	<key>ExpoWidgets_EnablePushNotifications</key>
 	<false/>
 	<key>LSMinimumSystemVersion</key>

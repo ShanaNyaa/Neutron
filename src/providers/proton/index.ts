@@ -377,7 +377,7 @@ export const protonProvider: ProviderDefinition = {
             if (e instanceof ProviderError && !e.isReauthRequired && pin === (await getItem(pinKey).catch(() => null))) await forgetPin();
             throw e;
           }
-          // Shared Keychain, for Shortcuts and Control Center (plugins/native/MottokarCore.swift).
+          // Shared Keychain, for Shortcuts and Control Center (plugins/native/NeutronCore.swift).
           // The PIN is readable only while unlocked; the marker is readable while locked, so
           // they can tell "unlock your iPhone" apart from "no PIN saved".
           await setItem(pinKey, pin, { whenUnlocked: true }).catch(() => {});

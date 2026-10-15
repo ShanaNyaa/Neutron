@@ -93,7 +93,7 @@ export default function Settings() {
               label="Credentials stay on this device"
               detail={
                 isIOS
-                  ? "Sign-ins and your car PIN are kept in the iOS Keychain, shared only with Mottokar's widgets and Shortcuts, and sent only to each brand's own servers. The PIN can only be read while your iPhone is unlocked."
+                  ? "Sign-ins and your car PIN are kept in the iOS Keychain, shared only with Neutron's widgets and Shortcuts, and sent only to each brand's own servers. The PIN can only be read while your iPhone is unlocked."
                   : "Sign-ins and your car PIN are kept in the Android Keystore and sent only to each brand's own servers."
               }
             />
@@ -140,15 +140,15 @@ export default function Settings() {
           <Group>
             <PanelRow icon="information-circle-outline" label="Version" value={Constants.expoConfig?.version ?? "1.0.0"} />
             <PanelRow
-              icon="person-circle-outline"
-              label="Maintainer"
-              detail="Zackry Rosli"
-              onPress={() => Linking.openURL("https://zackryrosli.com")}
-            />
-            <PanelRow
               icon="logo-github"
               label="GitHub Repository"
-              detail="github.com/zekr89/mottokar"
+              detail="github.com/ShanaNyaa/neutron"
+              onPress={() => Linking.openURL("https://github.com/ShanaNyaa/neutron")}
+            />
+            <PanelRow
+              icon="heart-outline"
+              label="Based on"
+              detail="Mottokar by Zackry Rosli"
               onPress={() => Linking.openURL("https://github.com/zekr89/mottokar")}
             />
           </Group>

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Mottokar.app"
-               BlueprintName = "Mottokar"
-               ReferencedContainer = "container:Mottokar.xcodeproj">
+               BuildableName = "Neutron.app"
+               BlueprintName = "Neutron"
+               ReferencedContainer = "container:Neutron.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "MottokarTests.xctest"
-               BlueprintName = "MottokarTests"
-               ReferencedContainer = "container:Mottokar.xcodeproj">
+               BuildableName = "NeutronTests.xctest"
+               BlueprintName = "NeutronTests"
+               ReferencedContainer = "container:Neutron.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Mottokar.app"
-            BlueprintName = "Mottokar"
-            ReferencedContainer = "container:Mottokar.xcodeproj">
+            BuildableName = "Neutron.app"
+            BlueprintName = "Neutron"
+            ReferencedContainer = "container:Neutron.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Mottokar.app"
-            BlueprintName = "Mottokar"
-            ReferencedContainer = "container:Mottokar.xcodeproj">
+            BuildableName = "Neutron.app"
+            BlueprintName = "Neutron"
+            ReferencedContainer = "container:Neutron.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
