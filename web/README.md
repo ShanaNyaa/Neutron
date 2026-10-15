@@ -52,6 +52,9 @@ to update it:
 podman compose run --rm dev node scripts/build-themes.mjs
 ```
 
+The Google Maps and Waze logos on the Parked here card are inline SVGs from
+[Simple Icons](https://simpleicons.org/) (CC0), in `client/src/components/BrandIcons.tsx`.
+
 ## Several people on one server
 
 Each person signs in with their own Proton Link account and sees only their own cars. There are

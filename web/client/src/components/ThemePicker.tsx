@@ -129,7 +129,7 @@ export function AppearanceSettings() {
   return (
     <section className="card stack">
       <h2 className="card-title">Appearance</h2>
-      <div className="segmented" role="group" aria-label="Theme" style={{ flexWrap: "wrap" }}>
+      <div className="segmented wrap" role="group" aria-label="Theme">
         {options.map((o) => (
           <button key={o.id} type="button" className={choice.kind === o.id || (o.id === "scheme" && browsing) ? "active" : undefined} aria-pressed={choice.kind === o.id} onClick={() => choose(o.id)}>
             {o.label}

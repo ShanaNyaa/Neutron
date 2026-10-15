@@ -969,6 +969,30 @@ label.field {
   height: clamp(220px, 34dvh, 300px);
 }
 
+/* On a short phone screen the car shrinks and the gaps tighten so the home still fits one screen. */
+@media (max-width: 959px) and (max-height: 820px) {
+  .home {
+    gap: 10px;
+  }
+
+  .hero-car {
+    height: clamp(170px, 28dvh, 300px);
+  }
+
+  .hero-range {
+    font-size: clamp(2.6rem, 12vw, 4.2rem);
+  }
+
+  .home-cards {
+    gap: 8px;
+  }
+
+  .home-card {
+    min-height: 56px;
+    padding: 8px 14px;
+  }
+}
+
 /* Proton's top-down pictures are portrait (630×855); fill the column and keep it whole. */
 .scene {
   position: relative;
@@ -1044,6 +1068,18 @@ label.field {
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   padding: 2px 0 4px;
+  /* The last visible button is cut on purpose; fade it so it reads as "swipe for more". */
+  --fade-l: 0px;
+  --fade-r: 36px;
+  mask-image: linear-gradient(to right, transparent, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent);
+}
+
+.actions.scrolled {
+  --fade-l: 36px;
+}
+
+.actions.at-end {
+  --fade-r: 0px;
 }
 
 .actions::-webkit-scrollbar {
@@ -1118,6 +1154,7 @@ label.field {
     grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
     overflow: visible;
     row-gap: 14px;
+    mask-image: none;
   }
 }
 
@@ -1139,6 +1176,13 @@ label.field {
   text-decoration: none;
   text-align: left;
   font: inherit;
+}
+
+/* One line each, so three cards always take the same height on a phone. */
+.home-card .list-body > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .home-card:hover:not(:disabled) {
@@ -1600,6 +1644,19 @@ a.list-row:hover {
   background: var(--surface);
   color: var(--text);
   box-shadow: var(--shadow);
+}
+
+/* Four options don't fit a phone in one row; two by two keeps every label whole. */
+@media (max-width: 479px) {
+  .segmented.wrap {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-self: stretch;
+  }
+
+  .segmented.wrap button {
+    white-space: nowrap;
+  }
 }
 
 .stats {

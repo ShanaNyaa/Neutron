@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronRight, CircleAlert, CircleCheck, Fuel, Lock, LockOpen, Power, RefreshCw, Route as RouteIcon, Snowflake } from "lucide-react";
 
 import type { WebStatus, WebVehicle } from "../api.ts";
@@ -152,9 +152,25 @@ function Actions({ vehicle, status: s }: { vehicle: WebVehicle; status?: WebStat
   const items = ORDER.map((id) => COMMANDS.find((c) => c.id === id)).filter(
     (c): c is CommandDef => !!c && !hidden.has(c.id) && (!vehicle.commands || vehicle.commands.includes(c.id)),
   );
+  // The strip fades its cut-off right edge until it's scrolled to the end.
+  const strip = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState({ scrolled: false, atEnd: false });
+  useEffect(() => {
+    const el = strip.current;
+    if (!el) return;
+    const check = () => setEdges({ scrolled: el.scrollLeft > 2, atEnd: el.scrollLeft + el.clientWidth >= el.scrollWidth - 2 });
+    check();
+    el.addEventListener("scroll", check, { passive: true });
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", check);
+      ro.disconnect();
+    };
+  }, [items.length]);
   if (!items.length) return null;
   return (
-    <div className="actions" role="group" aria-label="Remote controls">
+    <div ref={strip} className={`actions ${edges.scrolled ? "scrolled" : ""} ${edges.atEnd ? "at-end" : ""}`} role="group" aria-label="Remote controls">
       {items.map((c) => {
         const Icon = c.icon;
         const engine = c.id === "engine_start" || c.id === "engine_stop";
@@ -212,7 +228,7 @@ function ConditionCard({ status: s }: { status?: WebStatus }) {
       <span className={`list-icon ${ok ? "" : "accent"}`}>{ok ? <CircleCheck size={20} /> : <CircleAlert size={20} />}</span>
       <span className="list-body">
         <strong>Car condition</strong>
-        <span className={`small ${ok ? "muted" : "warn"}`}>{s ? (ok ? "Doors, windows, tyres and battery OK" : issues.slice(0, 2).join(" · ")) : "Loading…"}</span>
+        <span className={`small ${ok ? "muted" : "warn"}`}>{s ? (ok ? "All OK · doors, windows, tyres, battery" : issues.slice(0, 2).join(" · ")) : "Loading…"}</span>
       </span>
       <ChevronRight size={18} className="muted" />
     </a>

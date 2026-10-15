@@ -30,6 +30,7 @@ import {
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 import type { DataUsage, WebStatus, WebVehicle } from "../api.ts";
+import { GoogleMapsIcon, WazeIcon } from "../components/BrandIcons.tsx";
 import { MapView } from "../components/MapView.tsx";
 import { useArrange } from "../components/useArrange.ts";
 import { km, number, temp } from "../format.ts";
@@ -633,15 +634,16 @@ function LocationCard({ location, name }: { location: NonNullable<WebStatus["loc
       <h3 className="card-title" style={{ marginBottom: 4 }}><MapPin size={18} /> Parked here</h3>
       <p className="muted small" style={{ marginBottom: 10 }}>{address.data ?? (address.isLoading ? "Finding the address…" : `${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)}`)}</p>
       <MapView markers={[{ ...location, kind: "car", label: name }]} zoom={16} className="map short" />
-      <div className="row" style={{ marginTop: 10, flexWrap: "wrap" }}>
-        <a className="btn small" href={`https://www.google.com/maps/search/?api=1&query=${q}`} target="_blank" rel="noreferrer">
-          <MapPin size={16} /> Google Maps
-        </a>
+      {/* The map apps go by their logos; one row even on a narrow phone. */}
+      <div className="row" style={{ marginTop: 10, gap: 8 }}>
         <a className="btn small" href={`https://www.google.com/maps/dir/?api=1&destination=${q}`} target="_blank" rel="noreferrer">
           <Navigation size={16} /> Directions
         </a>
-        <a className="btn small" href={`https://waze.com/ul?ll=${q}&navigate=yes`} target="_blank" rel="noreferrer">
-          Waze
+        <a className="btn icon" href={`https://www.google.com/maps/search/?api=1&query=${q}`} target="_blank" rel="noreferrer" aria-label="Open in Google Maps" title="Google Maps">
+          <GoogleMapsIcon size={22} />
+        </a>
+        <a className="btn icon" href={`https://waze.com/ul?ll=${q}&navigate=yes`} target="_blank" rel="noreferrer" aria-label="Navigate with Waze" title="Waze">
+          <WazeIcon size={22} />
         </a>
       </div>
     </section>
